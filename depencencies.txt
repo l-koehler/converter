@@ -19,9 +19,3 @@ This program depends on some external Packages. All of them are free software un
         Available in all GNU/Linux package managers I know of under the name 'libreoffice'. Examples:
         apt-get install libreoffice
         pacman -S libreoffice
-
-3: VLC
-    LICENCE: GPLv2
-    Available in all GNU/Linux package managers I know of under the name 'vlc'. Examples:
-    apt-get install vlc
-    pacman -S vlc

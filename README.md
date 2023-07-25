@@ -2,9 +2,8 @@ Hello!
 This is a python program made to convert files from any format into any other format.
 For now, it supports various formats I added in ./supported_types. Any format mentioned on the second line of a file there can be converted into any format on the third line.
 
-Almost all Audio formats are supported thanks to FFmpeg.
-Most common Document/Image formats are supported thanks to unoconv.
-Most common Video formats are supported thanks to VLC.
+Almost all Audio/Video formats are supported thanks to FFmpeg.
+Most common Document/Image/Slideshow/Spreadsheet formats are supported thanks to unoconv.
 
 If you want to add your own converter, here is how to do it:
 
