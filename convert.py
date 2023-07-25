@@ -25,7 +25,7 @@ def check_type_support(input_file_type, output_file_type):
             with open(full_path, 'r') as file:
                 type_file = file.read()
                 input_types = ast.literal_eval(type_file.splitlines()[1]) # split file into lines, pick line 1 (0-based index) and convert it into a list (from a string representation of one)
-                output_types = ast.literal_eval(type_file.splitlines()[1])
+                output_types = ast.literal_eval(type_file.splitlines()[2])
 
                 if input_file_type in input_types and output_file_type in output_types:
                     # the file states conversion is possible using the converter in line 0

@@ -45,22 +45,24 @@ def convert(input_file_path, output_file_path):
     try:
         # Get the output format based on the output_file_path extension
         output_extension = output_file_path.split('.')[-1]
-        format = get_unoconv_format(output_extension)
+        unoconv_format = get_unoconv_format(output_extension)
 
         if unoconv_format is None:
             print(f"Unsupported output file extension: {output_extension}")
             return
 
         # Prepare the unoconv command
-        unoconv_command = ['unoconv', '-f', unoconv_format, '-o', output_path, input_path]
+        unoconv_command = ['unoconv', '-f', unoconv_format, '-o', output_file_path, input_file_path]
 
         # Run the unoconv command
         subprocess.run(unoconv_command, check=True)
 
-        print(f"File converted successfully. Output saved at: {output_path}")
+        print(f"File converted successfully. Output saved at: {output_file_path}")
     except subprocess.CalledProcessError as e:
         print(f"Error occurred during conversion: {e}")
+        return False
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
+        return False
 
     return True
