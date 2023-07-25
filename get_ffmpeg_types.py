@@ -30,6 +30,9 @@ def install_ffmpeg():
                     subprocess.run([pm, "install", "-y", "ffmpeg"])
                 elif pm == "pkgtool":
                     subprocess.run([pm, "installpkg", "ffmpeg"])
+                else:
+                    print("Unknown Package manager!")
+                    return False
 
                 print("FFmpeg has been successfully installed.")
                 return True
@@ -53,9 +56,14 @@ else:
     if ffmpeg_err_choice == "3":
         exit 0
     if ffmpeg_err_choice == "2":
-        install_ffmpeg()
+        if install_ffmpeg() == True:
+            if not is_ffmpeg_installed():
+                print("The Installer seems to have sucessfully installed FFmpeg, but FFmpeg is still not present on $PATH. Install FFmpeg or restart the program and select 'Disable Audio/Video Conversion'.")
+        else:
+            print("The Installer failed. Install FFmpeg or restart the program and select 'Disable Audio/Video Conversion'.")
     else:
         with open("ffmpeg_types.txt", "w") as file1:
             # Line 1 lists onput types, Line 2 lists output types
             file1.write("[]\n[]")
+
 
