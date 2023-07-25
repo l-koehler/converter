@@ -88,7 +88,7 @@ def parse_formats(input_str):
     mux_formats = []
 
     # Define the regular expression pattern to match lines starting with 'D' or 'E' and capture the first "word"
-    pattern = r'^\s*([DE])\s+(\S+)'
+    pattern = r'^\s*(DE|D|E)\s+(\S+)'
 
     # Split the input string into lines
     lines = input_str.splitlines()
@@ -98,9 +98,9 @@ def parse_formats(input_str):
         match = re.match(pattern, line)
         if match:
             action, file_extension = match.groups()
-            if action == 'D':
+            if action == 'D' or action == 'DE':
                 demux_formats.append(file_extension)
-            elif action == 'E':
+            if action == 'E' or action == 'DE':
                 mux_formats.append(file_extension)
 
     return demux_formats, mux_formats
