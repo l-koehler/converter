@@ -105,7 +105,21 @@ def parse_formats(input_str):
 
     return demux_formats, mux_formats
 
+def unmerge(input_list):
+    # sometimes, types are merged like "mp4, mp3" in the output of the above function. This would break the detection of supported types.
+    unmerged = []
+    for possible_format in input_list:
+        if ',' in possible_format:
+            subformats = possible_format.split(',')
+            for subform in subformats:
+                unmerged.append(subform)
+        else:
+            unmerged.append(possible_format)
+    return unmerged
+
 demux_formats, mux_formats = parse_formats(ffmpeg_formats)
+demux_formats = unmerge(demux_formats)
+mux_formats = unmerge(mux_formats)
 
 with open("./supported_types/ffmpeg_types.txt", "w") as file1:
     # Line 1 lists input types, Line 2 lists output types

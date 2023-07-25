@@ -39,7 +39,7 @@ def check_type_support(input_file_type, output_file_type):
         return possible_converters[0][0], possible_converters[0][1]
     else:
         # we have multiple converters to choose from
-        priority_list = ["vlc_converter.py", "ffmpeg.py"] # always choose vlc over ffmpeg (ffmpeg can take/return video files, but they will only contain audio)
+        priority_list = ["ffmpeg.py", "vlc_converter.py"]
 
         # Create a dictionary to store the positions of files in priority_list
         file_positions = {file: index for index, file in enumerate(priority_list)}
