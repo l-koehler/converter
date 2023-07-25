@@ -33,13 +33,13 @@ def check_type_support(input_file_type, output_file_type):
         else:
             pass
             # TODO: add support for recursive search later
-    if possible_converters = []:
+    if possible_converters == []:
         return "Conversion not possible, no installed converter supports this.", ""
-    elif len(possible_converters) = 1:
+    elif len(possible_converters) == 1:
         return possible_converters[0][0], possible_converters[0][1]
     else:
         # we have multiple converters to choose from
-        priority_list = ["vlc.py", "ffmpeg.py"] # always choose vlc over ffmpeg (ffmpeg can take/return video files, but they will only contain audio)
+        priority_list = ["handbrake.py", "ffmpeg.py"] # always choose vlc over ffmpeg (ffmpeg can take/return video files, but they will only contain audio)
 
         # Create a dictionary to store the positions of files in priority_list
         file_positions = {file: index for index, file in enumerate(priority_list)}
