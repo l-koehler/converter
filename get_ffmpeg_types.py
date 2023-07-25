@@ -56,7 +56,7 @@ else:
     print("[3]: Exit the converter")
     ffmpeg_err_choice = input("1/2/3: ")
     if ffmpeg_err_choice == "3":
-        exit 0
+        sys.exit(0)
     if ffmpeg_err_choice == "2":
         if install_ffmpeg() == True:
             if not is_ffmpeg_installed():
@@ -70,7 +70,7 @@ else:
             # Line 1 lists onput types, Line 2 lists output types
             file1.write("[]\n[]")
             print("Set FFmpegs supported In/Output types to none. FFmpeg will not be used.")
-            exit 0
+            sys.exit(0)
 
 # FFmpeg is assumed to be functional now.
 
