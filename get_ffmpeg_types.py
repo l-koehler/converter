@@ -1,6 +1,6 @@
 #!/bin/python3
 
-import subprocess, shutil, sys
+import subprocess, shutil, sys, re
 
 def is_ffmpeg_installed():
     try:
@@ -67,7 +67,7 @@ else:
             print("The Installer failed. Install FFmpeg or restart the program and select 'Disable Audio/Video Conversion'.")
     else:
         with open("ffmpeg_types.txt", "w") as file1:
-            # Line 1 lists onput types, Line 2 lists output types
+            # Line 1 lists input types, Line 2 lists output types
             file1.write("[]\n[]")
             print("Set FFmpegs supported In/Output types to none. FFmpeg will not be used.")
             sys.exit(0)
@@ -83,4 +83,31 @@ if completed_process.returncode == 0:
 else:
     print(f"Error: FFmpeg command returned non-zero exit status {completed_process.returncode}")
 
-print(ffmpeg_formats)
+def parse_formats(input_str):
+    demux_formats = []
+    mux_formats = []
+
+    # Define the regular expression pattern to match lines starting with 'D' or 'E' and capture the first "word"
+    pattern = r'^\s*([DE])\s+(\S+)'
+
+    # Split the input string into lines
+    lines = input_str.splitlines()
+
+    # Iterate over each line and extract format information
+    for line in lines:
+        match = re.match(pattern, line)
+        if match:
+            action, file_extension = match.groups()
+            if action == 'D':
+                demux_formats.append(file_extension)
+            elif action == 'E':
+                mux_formats.append(file_extension)
+
+    return demux_formats, mux_formats
+
+demux_formats, mux_formats = parse_formats(ffmpeg_formats)
+
+with open("ffmpeg_types.txt", "w") as file1:
+    # Line 1 lists input types, Line 2 lists output types
+    ffmpeg_types_content = str(demux_formats) + "\n" + str(mux_formats)
+    file1.write(ffmpeg_types_content)
