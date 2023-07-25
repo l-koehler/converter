@@ -1,9 +1,11 @@
-This program depends on three external Packages (and on python3, but that seems obvious). All of them are free software under a copyleft licence.
+This program depends on some external Packages. All of them are free software under a copyleft licence.
+
 1: FFmpeg
-    LICENCE: LGPL 2.1
+    LICENCE: LGPL 2.1+
     Available in all GNU/Linux package managers I know of under the name 'ffmpeg'. Examples:
     apt-get install ffmpeg
     pacman -S ffmpeg
+
 2: unoconv
     LICENCE: GPLv2
     Available in all GNU/Linux package managers I know of under the name 'unoconv'. Examples:
@@ -17,3 +19,15 @@ This program depends on three external Packages (and on python3, but that seems 
         Available in all GNU/Linux package managers I know of under the name 'libreoffice'. Examples:
         apt-get install libreoffice
         pacman -S libreoffice
+
+3: python-vlc
+    LICENCE: LGPL 2.1+
+    Available in PIP under the name python-vlc. Examples:
+    python3 -m pip install python-vlc
+
+    3.1: VLC
+        LICENCE: GPLv2
+        python-vlc depends on VLC
+        Available in all GNU/Linux package managers I know of under the name 'vlc'. Examples:
+        apt-get install vlc
+        pacman -S vlc
