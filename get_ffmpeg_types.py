@@ -59,11 +59,15 @@ else:
         if install_ffmpeg() == True:
             if not is_ffmpeg_installed():
                 print("The Installer seems to have sucessfully installed FFmpeg, but FFmpeg is still not present on $PATH. Install FFmpeg or restart the program and select 'Disable Audio/Video Conversion'.")
+            else:
+                print("Sucessfully installed FFmpeg.")
         else:
             print("The Installer failed. Install FFmpeg or restart the program and select 'Disable Audio/Video Conversion'.")
     else:
         with open("ffmpeg_types.txt", "w") as file1:
             # Line 1 lists onput types, Line 2 lists output types
             file1.write("[]\n[]")
+            print("Set FFmpegs supported In/Output types to none. FFmpeg will not be used.")
+            exit 0
 
-
+# FFmpeg is assumed to be functional now.
