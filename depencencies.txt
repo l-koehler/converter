@@ -20,12 +20,8 @@ This program depends on some external Packages. All of them are free software un
         apt-get install libreoffice
         pacman -S libreoffice
 
-3: Handbrake
+3: VLC
     LICENCE: GPLv2
-    Available on github.com/HandBrake/HandBrake and on handbrake.fr
-    The Converter comes with the Windows CLI version because I *really* dont feel like using Flatpaks here.
-    If you get it working reliably with the Flatpak, please open a pull request.
-
-    3.1: Wine
-        LICENCE: LGPL 2.1+
-        Available in all GNU/Linux package managers I know, but under varying names.
+    Available in all GNU/Linux package managers I know of under the name 'vlc'. Examples:
+    apt-get install vlc
+    pacman -S vlc
