@@ -1,3 +1,5 @@
+#!/bin/python3
+
 import subprocess, shutil, sys
 
 def is_ffmpeg_installed():
@@ -71,3 +73,14 @@ else:
             exit 0
 
 # FFmpeg is assumed to be functional now.
+
+# Run 'ffmpeg -formats' and store the output
+completed_process = subprocess.run(['ffmpeg', '-formats'], capture_output=True, text=True)
+
+# Check if the command was successful
+if completed_process.returncode == 0:
+    ffmpeg_formats = completed_process.stdout
+else:
+    print(f"Error: FFmpeg command returned non-zero exit status {completed_process.returncode}")
+
+print(ffmpeg_formats)
