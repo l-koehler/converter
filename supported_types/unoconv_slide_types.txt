@@ -1,0 +1,3 @@
+./converters/unoconv.py
+['odp', 'ppt', 'pptx', 'sda']
+['eps', 'gif', 'html', 'swf', 'odp', 'ppt', 'pdf', 'svg', 'sda', 'xml']

@@ -1,0 +1,19 @@
+This program depends on three external Packages (and on python3, but that seems obvious). All of them are free software under a copyleft licence.
+1: FFmpeg
+    LICENCE: LGPL 2.1
+    Available in all GNU/Linux package managers I know of under the name 'ffmpeg'. Examples:
+    apt-get install ffmpeg
+    pacman -S ffmpeg
+2: unoconv
+    LICENCE: GPLv2
+    Available in all GNU/Linux package managers I know of under the name 'unoconv'. Examples:
+    apt-get install unoconv
+    pacman -S unoconv
+
+    2.1: LibreOffice
+        LICENCE: MPL 2.0 (Mozilla Public Licence)
+        Unoconv depends on LibreOffice/OpenOffice (LibreOffice is recommended)
+        Already preinstalled in most distros, including Ubuntu and Linux Mint
+        Available in all GNU/Linux package managers I know of under the name 'libreoffice'. Examples:
+        apt-get install libreoffice
+        pacman -S libreoffice
