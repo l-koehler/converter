@@ -1,0 +1,61 @@
+import subprocess, shutil, sys
+
+def is_ffmpeg_installed():
+    try:
+        # Run the 'ffmpeg' command with the '-version' flag
+        # This will output the version information if FFmpeg is installed
+        subprocess.check_output(['ffmpeg', '-version'])
+        return True
+    except subprocess.CalledProcessError:
+        return False
+
+def install_ffmpeg():
+    package_managers = ["apt-get", "dnf", "yum", "pacman", "zypper", "apk", "xbps", "pkgtool"]
+
+    for pm in package_managers:
+        if shutil.which(pm):
+            try:
+                print(f"Installing FFmpeg using {pm}...")
+                if pm == "apt-get":
+                    subprocess.run([pm, "install", "-y", "ffmpeg"])
+                elif pm in ["dnf", "yum"]:
+                    subprocess.run([pm, "install", "-y", "ffmpeg"])
+                elif pm == "pacman":
+                    subprocess.run([pm, "-S", "--noconfirm", "ffmpeg"])
+                elif pm == "zypper":
+                    subprocess.run([pm, "install", "-y", "ffmpeg"])
+                elif pm == "apk":
+                    subprocess.run([pm, "add", "--no-cache", "ffmpeg"])
+                elif pm == "xbps":
+                    subprocess.run([pm, "install", "-y", "ffmpeg"])
+                elif pm == "pkgtool":
+                    subprocess.run([pm, "installpkg", "ffmpeg"])
+
+                print("FFmpeg has been successfully installed.")
+                return True
+            except subprocess.CalledProcessError as e:
+                print(f"An error occurred while installing FFmpeg using {pm}: {e}")
+                return False
+
+    print("No supported package manager found. Cannot install FFmpeg.")
+    return False
+
+if is_ffmpeg_installed():
+    print("FFmpeg is installed.")
+else:
+    print("FFmpeg is not installed/not on the $PATH. It is required for Audio and Video conversion.")
+    print("If you do not want to install it, you can disable Audio/Video conversion.")
+    print("")
+    print("[1]: Disable Audio/Video Conversion")
+    print("[2]: Attempt to install FFmpeg")
+    print("[3]: Exit the converter")
+    ffmpeg_err_choice = input("1/2/3: ")
+    if ffmpeg_err_choice == "3":
+        exit 0
+    if ffmpeg_err_choice == "2":
+        install_ffmpeg()
+    else:
+        with open("ffmpeg_types.txt", "w") as file1:
+            # Line 1 lists onput types, Line 2 lists output types
+            file1.write("[]\n[]")
+
