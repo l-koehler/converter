@@ -66,9 +66,9 @@ else:
         else:
             print("The Installer failed. Install FFmpeg or restart the program and select 'Disable Audio/Video Conversion'.")
     else:
-        with open("ffmpeg_types.txt", "w") as file1:
+        with open("./supported_types/ffmpeg_types.txt", "w") as file1:
             # Line 1 lists input types, Line 2 lists output types
-            file1.write("[]\n[]")
+            file1.write("Convert using: FFmpeg\n[]\n[]")
             print("Set FFmpegs supported In/Output types to none. FFmpeg will not be used.")
             sys.exit(0)
 
@@ -107,7 +107,7 @@ def parse_formats(input_str):
 
 demux_formats, mux_formats = parse_formats(ffmpeg_formats)
 
-with open("ffmpeg_types.txt", "w") as file1:
+with open("./supported_types/ffmpeg_types.txt", "w") as file1:
     # Line 1 lists input types, Line 2 lists output types
-    ffmpeg_types_content = str(demux_formats) + "\n" + str(mux_formats)
+    ffmpeg_types_content = "Convert using: FFmpeg\n" + str(demux_formats) + "\n" + str(mux_formats)
     file1.write(ffmpeg_types_content)
