@@ -46,11 +46,11 @@ if converter_path == "Conversion not possible, no installed converter supports t
     sys.exit(-1)
 
 # we can now assume that converter_path is a path to a python file that allows this conversion.
-converter_directory, converter_file = directory, file_name = os.path.split(converter_path)
+converter_directory, converter_file = os.path.split(converter_path)
 
 sys.path.append(os.path.abspath(converter_directory)) # add the folder the converter is in as importable, we can now import modules (converters) in there.
 
-converter = importlib.import_module(converter_file) # import the converter
+converter = importlib.import_module(converter_file.split('.')[0]) # import the converter
 
 converter_success = converter.convert(input_file_path, output_file_path)
 
