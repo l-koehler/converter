@@ -4,6 +4,8 @@ For now, it supports various formats I added in ./supported_types. Any format me
 
 Almost all Audio/Video formats are supported thanks to FFmpeg.
 Most common Document/Image/Slideshow/Spreadsheet formats are supported thanks to unoconv.
+Most common markup language formats are supported thanks to pandoc.
+
 
 If you want to add your own converter, here is how to do it:
 
