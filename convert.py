@@ -10,11 +10,11 @@ output_file_type = output_file_path.split('.')[-1]
 
 # Check if both input and output type are mentioned in any file in ./supported_types
 
-def check_type_support(input_file_type, output_file_type):
+def check_type_support(input_file_type, output_file_type, folder_path = "./supported_types"):
 
-    folder_path = os.path.abspath("./supported_types")
+    folder_path = os.path.abspath(folder_path)
     entries = os.listdir(folder_path)
-    possible_converters = []
+
     for entry in entries:
         # Construct the full path for the entry
         full_path = os.path.join(folder_path, entry)
@@ -29,32 +29,17 @@ def check_type_support(input_file_type, output_file_type):
 
                 if input_file_type in input_types and output_file_type in output_types:
                     # the file states conversion is possible using the converter in line 0
-                    possible_converters.append([type_file.splitlines()[0], full_path])
+                    return type_file.splitlines()[0], full_path
         else:
-            pass
-            # TODO: add support for recursive search later
-    if possible_converters == []:
-        return "Conversion not possible, no installed converter supports this.", ""
-    elif len(possible_converters) == 1:
-        return possible_converters[0][0], possible_converters[0][1]
-    else:
-        # we have multiple converters to choose from
-        priority_list = ["ffmpeg.py", "vlc_converter.py"]
+            try:
+                return check_type_support(input_file_type, output_file_type, full_path)
+            except "no_converter_found":
+                pass
+    raise "no_converter_found"
 
-        # Create a dictionary to store the positions of files in priority_list
-        file_positions = {file: index for index, file in enumerate(priority_list)}
-
-        # Define the sorting key function
-        def sorting_key(file):
-            return (file not in file_positions, file_positions.get(file, float('inf')))
-
-        # Sort Files based on the custom sorting key
-        sorted_files = sorted(possible_converters, key=sorting_key)
-
-        return sorted_files[0][0], sorted_files[0][1]
-
-converter_path, type_file_path = check_type_support(input_file_type, output_file_type)
-if converter_path == "Conversion not possible, no installed converter supports this.":
+try:
+    converter_path, type_file_path = check_type_support(input_file_type, output_file_type)
+except "no_converter_found":
     print("Conversion from {} to {} not possible. You can add your own converter as described in ./README.md".format(input_file_type, output_file_type))
     sys.exit(-1)
 
