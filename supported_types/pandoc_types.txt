@@ -1,0 +1,3 @@
+./converters/pandoc.py
+['bib', 'csljson', 'csv', 'tsv', 'docbook', 'docx', 'dokuwiki', 'endnotexml', 'epub', 'fb2', 'gfm', 'haddock', 'html', 'ipynb', 'jats', 'jira', 'json', 'latex', 'markdown', 'markdown_mmd', 'markdown_phpextra', 'markdown_strict', 'mediawiki', 'man', 'muse', 'native', 'odt', 'opml', 'org', 'ris', 'rtf', 'rst', 't2t', 'textile', 'tikiwiki', 'twiki', 'typst', 'vimwiki']
+['adoc', 'txt', 'tex', 'bib', 'html', 'md', 'ctx', 'json', 'xml', 'docx', 'fb2', 'haddock', 'icml', 'ipynb', 'wiki', 'ms', 'muse', 'odt', 'opml', 'org', 'pdf', 'pptx', 'rst', 'rtf', 'texinfo', 'textile', 'man', 'xwiki', 'zim']

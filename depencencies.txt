@@ -1,4 +1,4 @@
-This program depends on some external Packages. All of them are free software under a copyleft licence.
+This program depends on some external Packages that you will need to install yourself. All of them are free software under a licence commonly used for FOSS-Software.
 
 1: FFmpeg
     LICENCE: LGPL 2.1+
@@ -19,3 +19,13 @@ This program depends on some external Packages. All of them are free software un
         Available in all GNU/Linux package managers I know of under the name 'libreoffice'. Examples:
         apt-get install libreoffice
         pacman -S libreoffice
+
+3: pandoc
+    LICENCE: GPLv2+
+    Should be installed with pypandoc, follow the Installation Instructions there.
+
+    3.1: pypandoc
+        LICENCE: https://github.com/JessicaTegner/pypandoc/blob/master/LICENSE - Comparable to the MIT Licence
+        Available in PIP.
+        RECOMMENDED: Install the 'pypandoc_binary' package. 'python3 -m pip install pypandoc_binary' or 'pip3 install pypandoc_binary' should work.
+        ALTERNATIVE: Install the 'pypandoc' package if you already have pypandoc on your $PATH and want to save storage space.
