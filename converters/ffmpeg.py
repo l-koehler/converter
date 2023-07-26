@@ -3,7 +3,10 @@ import subprocess
 
 def convert(input_file_path, output_file_path):
 
-    ffmpeg_command = ['ffmpeg', '-i', input_file_path, output_file_path]
+    ffmpeg_command = ['ffmpeg', '-i', input_file_path, output_file_path,]
+
+    if output_file_path.split('.')[-1] == 'avi':
+        ffmpeg_command.append('-q:4')
 
     try:
         # Run FFmpeg using subprocess
