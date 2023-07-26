@@ -31,15 +31,15 @@ def check_type_support(input_file_type, output_file_type, folder_path = "./suppo
                     # the file states conversion is possible using the converter in line 0
                     return type_file.splitlines()[0], full_path
         else:
-            try:
-                return check_type_support(input_file_type, output_file_type, full_path)
-            except "no_converter_found":
-                pass
-    raise "no_converter_found"
+            pass # recursive search disabled
+#            try:
+#                return check_type_support(input_file_type, output_file_type, full_path)
+#            except "no_converter_found":
+#                pass'
+    return "no_converter_found",""
 
-try:
-    converter_path, type_file_path = check_type_support(input_file_type, output_file_type)
-except "no_converter_found":
+converter_path, type_file_path = check_type_support(input_file_type, output_file_type)
+if converter_path == "no_converter_found":
     print("Conversion from {} to {} not possible. You can add your own converter as described in ./README.md".format(input_file_type, output_file_type))
     sys.exit(-1)
 
