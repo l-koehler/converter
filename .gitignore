@@ -1,0 +1,2 @@
+# exclude pycache
+./converters/__pycache__
