@@ -1,4 +1,4 @@
-Hello!
+﻿Hello!
 This is a python program made to convert files from any format into any other format.
 For now, it supports various formats I added in ./supported_types. Any format mentioned on the second line of a file there can be converted into any format on the third line.
 
@@ -26,4 +26,4 @@ If you want to add your own converter, here is how to do it:
 8: If you used this to add a converter that works with file types the software does not cover yet, please make a pull request! I would love to add more formats to this!
 
 
-I want to add this as a extension to the Dolphin file manager so you can convert files by just right-clicking on them and hope to add this feature soon.
+You can add this Extension to the Dolphin File Manager by running the file add_to_dolphin.sh. This needs root permissions.
