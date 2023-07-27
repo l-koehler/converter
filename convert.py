@@ -16,43 +16,29 @@ if "--nogui" in sys.argv:
         input_file_path = input("Enter the input path: ")
         output_file_path = input("Enter the output path: ")
     # input_path and output_path are now set.
-
+    # search for a converter supporting the conversion
     input_file_type = input_file_path.split('.')[-1]
     output_file_type = output_file_path.split('.')[-1]
 
-    # Check if both input and output type are mentioned in any file in ./supported_types
+    folder_path = os.path.dirname(os.path.abspath(__file__)) + "/supported_types"
+    folder_path = os.path.abspath(folder_path)
+    entries = os.listdir(folder_path)
 
-    def check_type_support(input_file_type, output_file_type):
+    converter_path = ""
+    for entry in entries:
+        # Construct the full path for the entry
+        full_path = os.path.join(folder_path, entry)
+        # Check if the entry is a file
+        if os.path.isfile(full_path):
+            with open(full_path, 'r') as file:
+                type_file = file.read()
+                input_types = ast.literal_eval(type_file.splitlines()[1]) # split file into lines, pick line 1 (0-based index) and convert it into a list (from a string representation of one)
+                output_types = ast.literal_eval(type_file.splitlines()[2])
+                if input_file_type in input_types and output_file_type in output_types:
+                    converter_path = type_file.splitlines()[0]
+                    break # avoid continuing the loop after already having found a matching converter + preserve full_path for eventual error messages
 
-        folder_path = os.path.dirname(os.path.abspath(__file__)) + "/supported_types"
-        folder_path = os.path.abspath(folder_path)
-        entries = os.listdir(folder_path)
-
-        for entry in entries:
-            # Construct the full path for the entry
-            full_path = os.path.join(folder_path, entry)
-
-            # Check if the entry is a file
-            if os.path.isfile(full_path):
-
-                with open(full_path, 'r') as file:
-                    type_file = file.read()
-                    input_types = ast.literal_eval(type_file.splitlines()[1]) # split file into lines, pick line 1 (0-based index) and convert it into a list (from a string representation of one)
-                    output_types = ast.literal_eval(type_file.splitlines()[2])
-
-                    if input_file_type in input_types and output_file_type in output_types:
-                        # the file states conversion is possible using the converter in line 0
-                        return type_file.splitlines()[0], full_path
-            else:
-                pass # recursive search disabled
-    #            try:
-    #                return check_type_support(input_file_type, output_file_type, full_path)
-    #            except "no_converter_found":
-    #                pass'
-        return "no_converter_found",""
-
-    converter_path, type_file_path = check_type_support(input_file_type, output_file_type)
-    if converter_path == "no_converter_found":
+    if converter_path == "":
         print(f"Conversion from {input_file_type} to {output_file_type} not possible. You can add your own converter as described in ./README.md")
         sys.exit(-1)
 
@@ -69,7 +55,7 @@ if "--nogui" in sys.argv:
         print("Success! File converted.")
         sys.exit(0)
     else:
-        print(f"The converter was called successfully, but returned an error.\nConverter File: {converter_path}\nType File: {type_file_path}")
+        print(f"The converter was called successfully, but returned an error.\nConverter File: {converter_path}\nType File: {full_path}")
         sys.exit(-1)
 
 
@@ -80,10 +66,18 @@ def pre_display(self):
     # use command line args as in/output path if possible
     if len(sys.argv) >= 2:
         self.path_textbox_in.setText(sys.argv[1])
-        if len(sys.argv) >= 3:
-            self.path_textbox_out.setText(sys.argv[2])
         # manually call set_dropdown_choices. It should be called automatically by textChanged, but that only applies to edits by the user
         self.set_dropdown_choices(sys.argv[1])
+        if len(sys.argv) >= 3:
+            self.path_textbox_out.setText(sys.argv[2])
+            # select the extension in the dropdown menu
+            new_option = sys.argv[2].split('.')[-1]
+            index = self.options_combobox.findText(new_option)
+            if index != -1:
+                self.options_combobox.setCurrentIndex(index)
+            else:
+                self.show_error(text="Type not supported!", info=f"Conversion from \n'{sys.argv[1].split('.')[-1]}' to '{new_option}' not possible!")
+
 
 
     # Already declare the Variable that will store the selected converter, because it is lazily set on listing the file types for the dropdown.
@@ -219,7 +213,7 @@ class FileConverter(QWidget):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = FileConverter()
-    # add any code you want to run on start to pre_display()
+    # add any code you want to run on start of gui mode to pre_display()
     pre_display(window)
     sys.exit(app.exec_())
 

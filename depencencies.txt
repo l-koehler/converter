@@ -1,19 +1,19 @@
-This program depends on some external Packages that you will need to install yourself. All of them are free software under a licence commonly used for FOSS-Software.
+This program depends on some external Packages that you will need to install yourself. All of them are free software under a license commonly used for FOSS-Software.
 
 1: FFmpeg
-    LICENCE: LGPL 2.1+
+    LICENSE: LGPL 2.1+
     Available in all GNU/Linux package managers I know of under the name 'ffmpeg'. Examples:
     apt-get install ffmpeg
     pacman -S ffmpeg
 
 2: unoconv
-    LICENCE: GPLv2
+    LICENSE: GPLv2
     Available in all GNU/Linux package managers I know of under the name 'unoconv'. Examples:
     apt-get install unoconv
     pacman -S unoconv
 
     2.1: LibreOffice
-        LICENCE: MPL 2.0 (Mozilla Public Licence)
+        LICENSE: MPL 2.0 (Mozilla Public License)
         Unoconv depends on LibreOffice/OpenOffice (LibreOffice is recommended)
         Already preinstalled in most distros, including Ubuntu and Linux Mint
         Available in all GNU/Linux package managers I know of under the name 'libreoffice'. Examples:
@@ -21,15 +21,21 @@ This program depends on some external Packages that you will need to install you
         pacman -S libreoffice
 
 3: pandoc
-    LICENCE: GPLv2+
+    LICENSE: GPLv2+
     Should be installed with pypandoc, follow the Installation Instructions there.
 
     3.1: pypandoc
-        LICENCE: https://github.com/JessicaTegner/pypandoc/blob/master/LICENSE - Comparable to the MIT Licence
+        LICENSE: https://github.com/JessicaTegner/pypandoc/blob/master/LICENSE - Comparable to the MIT License
         Available in PIP.
         RECOMMENDED: Install the 'pypandoc_binary' package. 'python3 -m pip install pypandoc_binary' or 'pip3 install pypandoc_binary' should work.
         ALTERNATIVE: Install the 'pypandoc' package if you already have pypandoc on your $PATH and want to save storage space.
 
-4: tkinter
-    LICENCE: PSF-2.0
-    Installed in most python distributions already.
+4: PyQt-5
+    LICENSE: Dual-Licensed under the GPLv3 and the "Riverbank Commercial License". For this Software it is under the GPLv3. (https://riverbankcomputing.com/commercial/license-faq)
+    Available in PIP. Examples:
+    pip3 install PyQt5
+    python3 -m pip install PyQt5
+
+    4.1: Qt
+        LICENSE: For this Software it is under the GPLv3. (https://www.qt.io/faq/tag/qt-open-source-licensing)
+        Should be installed with PyQt.
