@@ -109,7 +109,7 @@ def on_dropdown_change(*args):
 
 # Create the main tkinter window
 root = tk.Tk()
-root.title("File Processing App")
+root.title("File Converter")
 
 # Create input and output file labels and entry boxes
 label_input_file = tk.Label(root, text="Input File:")
