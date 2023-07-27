@@ -1,3 +1,5 @@
+IMPORTANT: DO NOT USE TO OVERWRITE FILES. This program isnt tested. I just occasionally run it to see if it crashes or not, but I did not try every conversion.
+
 What does this do?
 
 This is a python program made to convert files from any format into any
