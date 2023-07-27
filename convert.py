@@ -10,8 +10,9 @@ output_file_type = output_file_path.split('.')[-1]
 
 # Check if both input and output type are mentioned in any file in ./supported_types
 
-def check_type_support(input_file_type, output_file_type, folder_path = "./supported_types"):
+def check_type_support(input_file_type, output_file_type):
 
+    folder_path = os.path.dirname(os.path.abspath(__file__)) + "/supported_types"
     folder_path = os.path.abspath(folder_path)
     entries = os.listdir(folder_path)
 
@@ -45,6 +46,7 @@ if converter_path == "no_converter_found":
 
 # we can now assume that converter_path is a path to a python file that allows this conversion.
 converter_directory, converter_file = os.path.split(converter_path)
+converter_directory = os.path.dirname(os.path.abspath(__file__)) + "/converters/"
 
 sys.path.append(os.path.abspath(converter_directory)) # add the folder the converter is in as importable, we can now import modules (converters) in there.
 

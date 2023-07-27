@@ -1,2 +1,2 @@
 # exclude pycache
-./converters/__pycache__
+converters/__pycache__/

@@ -8,6 +8,7 @@ def convert(input_file_path, output_file_path):
     output_file_ext = output_file_path.split('.')[-1]
     input_format = pandoc_formats.get(input_file_ext)
     output_format = pandoc_formats.get(output_file_ext)
+    print(output_format)
 
     for in_form_iterate in input_format:
         for out_form_iterate in output_format:
