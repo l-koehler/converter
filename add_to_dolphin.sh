@@ -40,7 +40,7 @@ select_action() {
 install() {
     script_dir="$(cd "$(dirname "$0")" && pwd)"
     cd "$servicemenus_path"
-    command_on_convert="sh -c \"python3 $script_dir/gui-convert.py '"%U"'\""
+    command_on_convert="sh -c \"python3 $script_dir/convert.py '"%U"'\""
     file="convert.desktop"
     filecontent="[Desktop Entry]\nType=Service\nMimeType=application/octet-stream;\nActions=convert\n\n[Desktop Action convert]\nName=Convert File\nIcon=inode-x-generic\nExec=$command_on_convert"
     echo -e "$filecontent" > "$file"
