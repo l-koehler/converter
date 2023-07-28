@@ -1,3 +1,3 @@
-./converters/unoconv.py
-['csv', 'xls', 'xml','xlsx', 'ods', 'sdc']
-['csv', 'html', 'xls', 'xml', 'ods', 'sdc', 'xhtml']
+unoconv
+csv xls xml xlsx ods sdc
+csv html xls xml ods sdc xhtml

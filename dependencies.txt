@@ -22,20 +22,11 @@ This program depends on some external Packages that you will need to install you
 
 3: pandoc
     LICENSE: GPLv2+
-    Should be installed with pypandoc, follow the Installation Instructions there.
+    Should be installed using your systems package manager. Ensure it is available under the name 'pandoc', maybe make a alias if its not?
+    Can also be installed by downloading the latest binary from (https://github.com/jgm/pandoc/releases), renaming it to pandoc, marking it executable and putting it on the $PATH.
 
-    3.1: pypandoc
-        LICENSE: https://github.com/JessicaTegner/pypandoc/blob/master/LICENSE - Comparable to the MIT License
-        Available in PIP.
-        RECOMMENDED: Install the 'pypandoc_binary' package. 'python3 -m pip install pypandoc_binary' or 'pip3 install pypandoc_binary' should work.
-        ALTERNATIVE: Install the 'pypandoc' package if you already have pypandoc on your $PATH and want to save storage space.
 
-4: PyQt-5
-    LICENSE: Dual-Licensed under the GPLv3 and the "Riverbank Commercial License". For this Software it is under the GPLv3. (https://riverbankcomputing.com/commercial/license-faq)
-    Available in PIP. Examples:
-    pip3 install PyQt5
-    python3 -m pip install PyQt5
-
-    4.1: Qt
-        LICENSE: For this Software it is under the GPLv3. (https://www.qt.io/faq/tag/qt-open-source-licensing)
-        Should be installed with PyQt.
+4: Qt
+    LICENSE: For this Software it is under the GPLv3. (https://www.qt.io/faq/tag/qt-open-source-licensing)
+    Should be installed using your systems package manager.
+    Can also be installed by following the instructions on (https://www.qt.io/download-open-source)
