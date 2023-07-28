@@ -3,5 +3,6 @@
 .qmake.stash
 convert
 convert.o
+functions.o
 main.moc
 Makefile
