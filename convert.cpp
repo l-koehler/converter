@@ -84,6 +84,18 @@ public:
 // Various functions the GUI program uses.
 // The --nogui program has those separately, changes here will only affect the GUI Program.
 private slots:
+    // Returns the absolute path of the executable
+    std::string getCurrentFilePath() {
+        char buffer[PATH_MAX];
+        ssize_t len = GetCurrentPath(buffer, sizeof(buffer) - 1);
+        if (len != -1) {
+            buffer[len] = '\0';
+            return std::string(buffer);
+        } else {
+            std::cerr << "Error getting the executable path." << std::endl;
+            return "";
+            }
+        }
 
     // Gets called each time the Input Text box changes content. Takes the extension and checks for possible output extensions, then lists those in the dropdown menu.
     void setDropdownChoices() {
@@ -96,7 +108,6 @@ private slots:
         for (const auto& option : optionsVector) {
             options_combobox->addItem(QString::fromStdString(option));
         }
-        optionsVector = {}
     }
 
     // Gets called each time the Input Text box or the dropdown menu changes content. WARNING: This might be redundant, one of these triggers might get removed. Updates the path to the output file to reflect
@@ -184,14 +195,13 @@ int main(int argc, char *argv[]) {
                 std::cin >> output_file;
             }
             // input_file and output_file are set now
-            convert(input_file, output_file, false)
+            convert(input_file, output_file, false);
         }
-
+    }
     // --nogui is not present, use the GUI
 
     QApplication app(argc, argv);
     ConverterApp converterApp;
     return app.exec();
-    }
-
+}
 #include "main.moc"
