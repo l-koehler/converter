@@ -2,6 +2,8 @@
 
 QT += widgets
 
-SOURCES += convert.cpp
+SOURCES += convert.cpp \
+           functions.cpp
+HEADERS += functions.h
 
 TARGET = convert
