@@ -39,6 +39,18 @@
 
 // Declare various functions used in convert.cpp
 
+std::string getCurrentFilePath() {
+    char buffer[PATH_MAX];
+    ssize_t len = GetCurrentPath(buffer, sizeof(buffer) - 1);
+    if (len != -1) {
+        buffer[len] = '\0';
+        return std::string(buffer);
+    } else {
+        std::cerr << "Error getting the executable path." << std::endl;
+        return "";
+        }
+    }
+
 void show_error(const std::string& title , const std::string& text , const std::string& info , const bool is_error) {
         QMessageBox error_box;
         if (is_error) {

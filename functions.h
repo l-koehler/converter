@@ -7,6 +7,7 @@
 std::string readNthLine(const std::string& filePath, int n);
 std::string getExtension(const std::string& fullPath);
 std::string removeExtension(const std::string& filePath);
+std::string getCurrentFilePath();
 bool isWordPresent(const std::string& inputString, const std::string& word);
 int execSystem(const std::string& command);
 void show_error(const std::string& title , const std::string& text , const std::string& info , const bool is_error);

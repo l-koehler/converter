@@ -84,18 +84,6 @@ public:
 // Various functions the GUI program uses.
 // The --nogui program has those separately, changes here will only affect the GUI Program.
 private slots:
-    // Returns the absolute path of the executable
-    std::string getCurrentFilePath() {
-        char buffer[PATH_MAX];
-        ssize_t len = GetCurrentPath(buffer, sizeof(buffer) - 1);
-        if (len != -1) {
-            buffer[len] = '\0';
-            return std::string(buffer);
-        } else {
-            std::cerr << "Error getting the executable path." << std::endl;
-            return "";
-            }
-        }
 
     // Gets called each time the Input Text box changes content. Takes the extension and checks for possible output extensions, then lists those in the dropdown menu.
     void setDropdownChoices() {
