@@ -1,2 +1,7 @@
-# exclude pycache
-converters/__pycache__/
+# Exclude the compiled program to keep sizes minimal.
+# You can get a compiled version from the github releases page.
+.qmake.stash
+convert
+convert.o
+main.moc
+Makefile
