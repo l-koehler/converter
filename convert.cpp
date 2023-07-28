@@ -1,14 +1,3 @@
-// needed for GUI
-#include <QApplication>
-#include <QWidget>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QComboBox>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QFileDialog>
-#include <QMessageBox>
-
 #include <iostream>
 #include <string>
 #include <filesystem> // (only works in C++17 and later)
@@ -20,6 +9,17 @@
 #include <dirent.h>
 #include <cstdlib>
 
+// needed for GUI
+#include <QApplication>
+#include <QWidget>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QComboBox>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QFileDialog>
+#include <QMessageBox>
+
 #ifdef _WIN32
     #include <Windows.h>
     #define GetCurrentPath(buffer, size) GetModuleFileName(NULL, buffer, size)
@@ -28,11 +28,12 @@
     #include <limits.h>
     #define GetCurrentPath(buffer, size) readlink("/proc/self/exe", buffer, size)
 #else
-    #warning "Unknown or less common operating system. getCurrentPath() may not work as expected."
+    #warning "Unknown or less common operating system. The Program may not work as expected. Assuming POSIX compliance."
     #include <unistd.h>
     #include <limits.h>
     #define GetCurrentPath(buffer, size) readlink("/proc/self/exe", buffer, size)
 #endif
+
 
 class ConverterApp : public QWidget {
     Q_OBJECT
@@ -74,17 +75,17 @@ public:
 
 private slots:
     std::string getCurrentFilePath() {
-    char buffer[PATH_MAX];
-    ssize_t len = GetCurrentPath(buffer, sizeof(buffer) - 1);
+        char buffer[PATH_MAX];
+        ssize_t len = GetCurrentPath(buffer, sizeof(buffer) - 1);
 
-    if (len != -1) {
-        buffer[len] = '\0';
-        return std::string(buffer);
-    } else {
-        std::cerr << "Error getting the executable path." << std::endl;
-        return "";
+        if (len != -1) {
+            buffer[len] = '\0';
+            return std::string(buffer);
+        } else {
+            std::cerr << "Error getting the executable path." << std::endl;
+            return "";
+            }
         }
-    }
     std::string readNthLine(const std::string& filePath, int n) {
         std::ifstream file(filePath);
 
@@ -109,37 +110,37 @@ private slots:
         return "";
     }
     std::string getExtension(const std::string& fullPath) {
-    size_t dotPosition = fullPath.find_last_of('.');
-    if (dotPosition != std::string::npos) {
-        // Extract the substring after the dot
-        return fullPath.substr(dotPosition + 1);
-    }
-    // If there is no dot or the dot is at the end of the string (e.g., "file."), return an empty string
-    return "";
-    }
-    bool isWordPresent(const std::string& inputString, const std::string& word) {
-    size_t found = inputString.find(word);
-    return found != std::string::npos;
-    }
-    std::string removeExtension(const std::string& filePath) {
-    size_t lastDotIndex = filePath.find_last_of(".");
-    if (lastDotIndex != std::string::npos) {
-        return filePath.substr(0, lastDotIndex);
-    }
-    return filePath;
-    }
-    int execSystem(const std::string& command) {
-    // Use system() to run the command and get the return code
-    int returnCode = system(command.c_str());
-
-    // Extract the exit code from the return value
-    if (returnCode == -1) {
-        // An error occurred while trying to execute the command
-        return -1;
-    } else {
-        // Extract the exit code (the lower 8 bits) from the return value
-        return returnCode & 0xFF;
+        size_t dotPosition = fullPath.find_last_of('.');
+        if (dotPosition != std::string::npos) {
+            // Extract the substring after the dot
+            return fullPath.substr(dotPosition + 1);
         }
+        // If there is no dot or the dot is at the end of the string (e.g., "file."), return an empty string
+        return "";
+        }
+    bool isWordPresent(const std::string& inputString, const std::string& word) {
+        size_t found = inputString.find(word);
+        return found != std::string::npos;
+        }
+    std::string removeExtension(const std::string& filePath) {
+        size_t lastDotIndex = filePath.find_last_of(".");
+        if (lastDotIndex != std::string::npos) {
+            return filePath.substr(0, lastDotIndex);
+        }
+        return filePath;
+        }
+    int execSystem(const std::string& command) {
+        // Use system() to run the command and get the return code
+        int returnCode = system(command.c_str());
+
+        // Extract the exit code from the return value
+        if (returnCode == -1) {
+            // An error occurred while trying to execute the command
+            return -1;
+        } else {
+            // Extract the exit code (the lower 8 bits) from the return value
+            return returnCode & 0xFF;
+            }
     }
     void show_error(const std::string& title , const std::string& text , const std::string& info , const bool is_error) {
         QMessageBox error_box;
@@ -221,7 +222,6 @@ private slots:
         std::filesystem::path pathObj(filepath);
         std::string directorypath = pathObj.parent_path().string();
         std::string typefilepath = directorypath + "/supported_types";
-        std::vector<std::string> optionsVector;
         std::string supported_in_types;
         std::string supported_out_types;
         std::string output_file_ext = options_combobox->currentText().toStdString();
@@ -299,8 +299,193 @@ private:
     QComboBox *options_combobox;
     QPushButton *confirm_button;
 };
+std::string readNthLine(const std::string& filePath, int n) {
+    std::ifstream file(filePath);
 
+    if (!file.is_open()) {
+        std::cerr << "Error opening file: " << filePath << std::endl;
+        return "";
+    }
+
+    std::string line;
+    int lineCount = 1; // WARNING: 1-based indexing
+
+    while (std::getline(file, line)) {
+        if (lineCount == n) {
+            file.close();
+            return line;
+        }
+        lineCount++;
+    }
+
+    file.close();
+    std::cerr << "Line " << n << " not found in file: " << filePath << std::endl;
+    return "";
+}
+std::string getExtension(const std::string& fullPath) {
+    size_t dotPosition = fullPath.find_last_of('.');
+    if (dotPosition != std::string::npos) {
+        // Extract the substring after the dot
+        return fullPath.substr(dotPosition + 1);
+    }
+    // If there is no dot or the dot is at the end of the string (e.g., "file."), return an empty string
+    return "";
+    }
+bool isWordPresent(const std::string& inputString, const std::string& word) {
+    size_t found = inputString.find(word);
+    return found != std::string::npos;
+    }
+std::string removeExtension(const std::string& filePath) {
+    size_t lastDotIndex = filePath.find_last_of(".");
+    if (lastDotIndex != std::string::npos) {
+        return filePath.substr(0, lastDotIndex);
+    }
+    return filePath;
+    }
+int execSystem(const std::string& command) {
+    // Use system() to run the command and get the return code
+    int returnCode = system(command.c_str());
+
+    // Extract the exit code from the return value
+    if (returnCode == -1) {
+        // An error occurred while trying to execute the command
+        return -1;
+    } else {
+        // Extract the exit code (the lower 8 bits) from the return value
+        return returnCode & 0xFF;
+        }
+}
 int main(int argc, char *argv[]) {
+
+    for (int i = 1; i < argc; ++i) {
+        if (strcmp(argv[i], "--nogui") == 0) {
+            std::cout << "No GUI mode enabled." << std::endl;
+            std::string input_file, output_file;
+
+            // Iterate through the command-line arguments
+            for (int i = 1; i < argc; ++i) {
+                // Compare each argument with the "--nogui" flag
+                if (strcmp(argv[i], "--nogui") == 0) {
+                    // Skip "--nogui" arguments
+                    continue;
+                }
+
+                // Check if input_file has been assigned, if not, assign the current argument to it
+                if (input_file.empty()) {
+                    input_file = argv[i];
+                } else {
+                    // Check if output_file has been assigned, if not, assign the current argument to it
+                    if (output_file.empty()) {
+                        output_file = argv[i];
+                    } else {
+                        // If both arguments are already assigned, break the loop (optional)
+                        break;
+                    }
+                }
+            }
+
+            if (!input_file.empty()) {
+                std::cout << "input_file: " << input_file << std::endl;
+            } else {
+                std::cout << "Enter value for input_file: ";
+                std::cin >> input_file;
+            }
+
+            if (!output_file.empty()) {
+                std::cout << "output_file: " << output_file << std::endl;
+            } else {
+                std::cout << "Enter value for output_file: ";
+                std::cin >> output_file;
+            }
+            // input_file and output_file are set now
+            char buffer[PATH_MAX];
+            ssize_t len = GetCurrentPath(buffer, sizeof(buffer) - 1);
+            std::string filepath;
+
+            if (len != -1) {
+                buffer[len] = '\0';
+                filepath = (buffer);
+            } else {
+                std::cerr << "Error getting the executable path." << std::endl;
+                std::exit(-1);
+                }
+            // Extract the directory path
+            std::filesystem::path pathObj(filepath);
+            std::string directorypath = pathObj.parent_path().string();
+            std::string typefilepath = directorypath + "/supported_types";
+            std::string supported_in_types;
+            std::string supported_out_types;
+            std::string output_file_ext = getExtension(output_file);
+            std::string input_file_ext = getExtension(input_file);
+            std::string converter;
+            int exit_code;
+            for (const auto& entry : std::filesystem::directory_iterator(typefilepath)) {
+                // Check if the current entry is a regular file
+                //std::cout << "checking out " << entry << "\n";
+                if (entry.is_regular_file()) {
+                    // Get the file path
+                    std::string file_path = entry.path().string();
+                    // currently iterating over typefiles, filename is the current file name.
+                    supported_in_types = readNthLine(file_path, 2);
+                    supported_out_types = readNthLine(file_path, 3);
+                    //std::cout << "self i/o: " << input_file_ext << " / " << output_file_ext << "\n";
+                    if (isWordPresent(supported_in_types, input_file_ext) && isWordPresent(supported_out_types, output_file_ext)) {
+                        //std::cout << "matched " << entry << "\n";
+                        converter = readNthLine(file_path, 1);
+                    }
+                }
+            }
+            if (converter == "") {
+                std::cerr << "Error: No converter found. Conversion is not possible." << std::endl;
+                std::exit(-1);
+            }
+            // converter is set, input_file is set, output_file is set.
+            if (converter == "ffmpeg") {
+                // use ffmpeg for conversion
+                exit_code = execSystem(std::string("ffmpeg -i \"" + input_file + "\" \"" + output_file + "\""));
+                if (exit_code == 0) {
+                    std::cout << "Success: The file has been converted!";
+                } else {
+                    std::cerr << "Error: FFmpeg was called successfully, but returned a non-zero exit code." << std::endl;
+                    std::exit(-1);
+                }
+            } else if (converter == "unoconv") {
+                // use unoconv for conversion
+                exit_code = execSystem(std::string("unoconv \"" + input_file + "\" \"" + output_file + "\""));
+                if (exit_code == 0) {
+                    std::cout << "Success: The file has been converted!";
+                } else {
+                    std::cerr << "Error: unoconv was called successfully, but returned a non-zero exit code. " << std::endl;
+                    std::exit(-1);
+                }
+            } else if (converter == "pandoc") {
+                // use pandoc for conversion
+                exit_code = execSystem(std::string("pandoc \"" + input_file + "\" \"" + output_file + "\""));
+                if (exit_code == 0) {
+                    std::cout << "Success: The file has been converted!";
+                } else {
+                    std::cerr << "Error: pandoc was called successfully, but returned a non-zero exit code. " << std::endl;
+                    std::exit(-1);
+                }
+            } else if (converter.find("file/") == 0) {
+                // use other converter
+                converter.erase(0, 5);
+                exit_code = execSystem(std::string(converter + " \"" + input_file + "\" \"" + output_file + "\""));
+                if (exit_code == 0) {
+                    std::cout << "Success: The file has been converted!";
+                } else {
+                    std::cerr << "Error: The custom specified Converter was called successfully, but returned a non-zero exit code. " << std::endl;
+                    std::exit(-1);
+                }
+            } else {
+                std::cerr << "A unknown converter was specified by the type file. Prepend custom converters with 'file/'. Example: file/python3 ~/converter.py." << std::endl;
+                std::exit(-1);
+            }
+            break;
+            return 0;
+            }
+        }
+
     QApplication app(argc, argv);
     ConverterApp converterApp;
     return app.exec();
