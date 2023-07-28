@@ -45,14 +45,17 @@ class ConverterApp : public QWidget {
 
 public:
     // This defines the layout of the GUI, make changes here to change the user interfase.
-    ConverterApp(QWidget *parent = nullptr) : QWidget(parent) {
+    ConverterApp(const std::string& file_input = "", const std::string& file_output = "", QWidget *parent = nullptr) : QWidget(parent) {
         // Title
         setWindowTitle("File Converter");
+
         // Text boxes
         path_textbox_in = new QLineEdit(this);
+        path_textbox_in->setText(QString::fromStdString(file_input));
         connect(path_textbox_in, &QLineEdit::textChanged, this, &ConverterApp::setDropdownChoices);
         connect(path_textbox_in, &QLineEdit::textChanged, this, &ConverterApp::setOutputPath);
         path_textbox_out = new QLineEdit(this);
+        path_textbox_out->setText(QString::fromStdString(file_output));
 
         // Browse button
         browse_button = new QPushButton("Browse", this);
@@ -140,12 +143,13 @@ private:
 // main function, either converts without GUI or calls the GUI application.
 int main(int argc, char *argv[]) {
 
+    std::string input_file = "";
+    std::string output_file = "";
+
     // Check if --nogui is present
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "--nogui") == 0) {
             std::cout << "No GUI mode enabled." << std::endl;
-            std::string input_file, output_file;
-
             // Iterate through the command-line arguments
             for (int i = 1; i < argc; ++i) {
                 // Compare each argument with the "--nogui" flag
@@ -153,7 +157,6 @@ int main(int argc, char *argv[]) {
                     // Skip "--nogui" arguments
                     continue;
                 }
-
                 // Check if input_file has been assigned, if not, assign the current argument to it
                 if (input_file.empty()) {
                     input_file = argv[i];
@@ -168,6 +171,7 @@ int main(int argc, char *argv[]) {
                 }
             }
 
+            // Ensure input_file and output_file are set
             if (!input_file.empty()) {
                 std::cout << "input_file: " << input_file << std::endl;
             } else {
@@ -187,8 +191,19 @@ int main(int argc, char *argv[]) {
     }
     // --nogui is not present, use the GUI
 
-    QApplication app(argc, argv);
-    ConverterApp converterApp;
-    return app.exec();
+    if (argc >= 3) {
+        QApplication app(argc, argv);
+        ConverterApp converterApp(argv[1], argv[2]);
+        return app.exec();
+    } else if (argc >= 2) {
+        QApplication app(argc, argv);
+        ConverterApp converterApp(argv[1], "");
+            return app.exec();
+    } else {
+        QApplication app(argc, argv);
+        ConverterApp converterApp("", "");
+        return app.exec();
+    }
+
 }
 #include "main.moc"
