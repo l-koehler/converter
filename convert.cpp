@@ -1,6 +1,7 @@
+// Needed for basic logic and interaction with files
 #include <iostream>
 #include <string>
-#include <filesystem> // (only works in C++17 and later)
+#include <filesystem> // only works in C++17 and later, older versions are not supported!
 #include <fstream>
 #include <sstream>
 #include <vector>
@@ -9,7 +10,7 @@
 #include <dirent.h>
 #include <cstdlib>
 
-// needed for GUI
+// Needed for the GUI
 #include <QApplication>
 #include <QWidget>
 #include <QLineEdit>
@@ -20,6 +21,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+// Needed to get the current location of the executable. This is needed to find the typefiles.
+// DEPRECATED! All needed files will be embedded in the executable soon!
 #ifdef _WIN32
     #include <Windows.h>
     #define GetCurrentPath(buffer, size) GetModuleFileName(NULL, buffer, size)
@@ -34,11 +37,12 @@
     #define GetCurrentPath(buffer, size) readlink("/proc/self/exe", buffer, size)
 #endif
 
-
+// this Class contains the GUI Program
 class ConverterApp : public QWidget {
     Q_OBJECT
 
 public:
+    // This defines the layout of the GUI, make changes here to change the user interfase.
     ConverterApp(QWidget *parent = nullptr) : QWidget(parent) {
         // Text boxes
         path_textbox_in = new QLineEdit(this);
@@ -73,11 +77,13 @@ public:
         show();
     }
 
+// Various functions the GUI program uses.
+// The --nogui program has those separately, changes here will only affect the GUI Program.
 private slots:
+    // Returns the absolute path of the executable
     std::string getCurrentFilePath() {
         char buffer[PATH_MAX];
         ssize_t len = GetCurrentPath(buffer, sizeof(buffer) - 1);
-
         if (len != -1) {
             buffer[len] = '\0';
             return std::string(buffer);
@@ -86,17 +92,16 @@ private slots:
             return "";
             }
         }
+
+    // Takes a file path and a number n, returns the line n of the file.
     std::string readNthLine(const std::string& filePath, int n) {
         std::ifstream file(filePath);
-
         if (!file.is_open()) {
             std::cerr << "Error opening file: " << filePath << std::endl;
             return "";
         }
-
         std::string line;
         int lineCount = 1; // WARNING: 1-based indexing
-
         while (std::getline(file, line)) {
             if (lineCount == n) {
                 file.close();
@@ -104,11 +109,12 @@ private slots:
             }
             lineCount++;
         }
-
         file.close();
         std::cerr << "Line " << n << " not found in file: " << filePath << std::endl;
         return "";
     }
+
+    // Takes a file path or name, returns the file extension.
     std::string getExtension(const std::string& fullPath) {
         size_t dotPosition = fullPath.find_last_of('.');
         if (dotPosition != std::string::npos) {
@@ -118,21 +124,27 @@ private slots:
         // If there is no dot or the dot is at the end of the string (e.g., "file."), return an empty string
         return "";
         }
+
+
+    // Takes a file path or name, returns everything but the file extension.
+    std::string removeExtension(const std::string& filePath) {
+        size_t dotPosition = filePath.find_last_of(".");
+        if (dotPosition != std::string::npos) {
+            return filePath.substr(0, dotPosition);
+        }
+        return filePath;
+        }
+
+    // Returns true when word is contained in inputString, returns false otherwise
     bool isWordPresent(const std::string& inputString, const std::string& word) {
         size_t found = inputString.find(word);
         return found != std::string::npos;
         }
-    std::string removeExtension(const std::string& filePath) {
-        size_t lastDotIndex = filePath.find_last_of(".");
-        if (lastDotIndex != std::string::npos) {
-            return filePath.substr(0, lastDotIndex);
-        }
-        return filePath;
-        }
+
+    // Executes a String using the system shell (Terminal) and returns the exit Code.
     int execSystem(const std::string& command) {
         // Use system() to run the command and get the return code
         int returnCode = system(command.c_str());
-
         // Extract the exit code from the return value
         if (returnCode == -1) {
             // An error occurred while trying to execute the command
@@ -142,6 +154,8 @@ private slots:
             return returnCode & 0xFF;
             }
     }
+
+    // Shows a Popup Message using QT. Misleading naming: It can also be a regular information popup when is_error = false.
     void show_error(const std::string& title , const std::string& text , const std::string& info , const bool is_error) {
         QMessageBox error_box;
         if (is_error) {
@@ -156,11 +170,10 @@ private slots:
         error_box.exec();
     }
 
+    // Gets called each time the Input Text box changes content. Takes the extension and checks for possible output extensions, then lists those in the dropdown menu.
     void setDropdownChoices() {
-        // Triggered on Input change
         std::string textbox_in_content = path_textbox_in->text().toStdString();
         std::string textbox_in_extension = getExtension(textbox_in_content);
-        // Implement logic to set drop-down choices based on input file
         std::string filepath = getCurrentFilePath();
         // Extract the directory path
         std::filesystem::path pathObj(filepath);
@@ -195,6 +208,8 @@ private slots:
         }
     }
 
+    // Gets called each time the Input Text box or the dropdown menu changes content. WARNING: This might be redundant, one of these triggers might get removed. Updates the path to the output file to reflect
+    // the path to the input file, but with the extension selected by the dropdown menu.
     void setOutputPath() {
         std::string textbox_in_content = path_textbox_in->text().toStdString();
         std::string input_path_filename = removeExtension(textbox_in_content);
@@ -202,17 +217,18 @@ private slots:
         path_textbox_out->setText(QString::fromStdString(textbox_out_content));
     }
 
+    // Gets called whenever the user clicks on the file chooser button. Sets the selected file to be the input path.
     void browseFile() {
-    // Open a file dialog to browse for the input file
-    QString file_path = QFileDialog::getOpenFileName(this, "Select Input File", "", "All Files (*.*);;Text Files (*.txt)");
-
-    // Check if a file was selected
-    if (!file_path.isEmpty()) {
-        // Set the selected file path in the input text box
-        path_textbox_in->setText(file_path);
-        }
+        // Open a file dialog to browse for the input file
+        QString file_path = QFileDialog::getOpenFileName(this, "Select Input File", "", "All Files (*.*);;Text Files (*.txt)");
+        // Check if a file was selected
+        if (!file_path.isEmpty()) {
+            // Set the selected file path in the input text box
+            path_textbox_in->setText(file_path);
+            }
     }
 
+    // Gets called when the User clicks Convert. WARNING: Contains a lot of redundant code, will be optimized/rewritten soon.
     void convert() {
         // Implement the conversion logic.
         std::string input_file = path_textbox_in->text().toStdString();
@@ -292,6 +308,7 @@ private slots:
         }
     }
 
+// Set the variables that represent the GUI elements.
 private:
     QLineEdit *path_textbox_in;
     QLineEdit *path_textbox_out;
@@ -299,6 +316,8 @@ private:
     QComboBox *options_combobox;
     QPushButton *confirm_button;
 };
+
+// Repeat the function definitions from above for the nogui converter. TODO: Make the ones below have a GUI toggle and replace the definitions above with calls to the ones here.
 std::string readNthLine(const std::string& filePath, int n) {
     std::ifstream file(filePath);
 
@@ -321,7 +340,7 @@ std::string readNthLine(const std::string& filePath, int n) {
     file.close();
     std::cerr << "Line " << n << " not found in file: " << filePath << std::endl;
     return "";
-}
+    }
 std::string getExtension(const std::string& fullPath) {
     size_t dotPosition = fullPath.find_last_of('.');
     if (dotPosition != std::string::npos) {
@@ -354,9 +373,12 @@ int execSystem(const std::string& command) {
         // Extract the exit code (the lower 8 bits) from the return value
         return returnCode & 0xFF;
         }
-}
+    }
+
+// main function, either converts without GUI or calls the GUI application.
 int main(int argc, char *argv[]) {
 
+    // Check if --nogui is present
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "--nogui") == 0) {
             std::cout << "No GUI mode enabled." << std::endl;
@@ -485,6 +507,8 @@ int main(int argc, char *argv[]) {
             return 0;
             }
         }
+
+    // --nogui is not present, use the GUI
 
     QApplication app(argc, argv);
     ConverterApp converterApp;
