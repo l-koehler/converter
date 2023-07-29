@@ -126,7 +126,7 @@ int execSystem(const std::string& command) {
     }
 }
 
-std::vector<std::string> getPossibleOutput(const std::string& input_file, const std::string& output_file) {
+std::vector<std::string> getPossibleOutput(const std::string& input_file) {
     char buffer[PATH_MAX];
     ssize_t len = GetCurrentPath(buffer, sizeof(buffer) - 1);
     std::string filepath;
@@ -143,7 +143,6 @@ std::vector<std::string> getPossibleOutput(const std::string& input_file, const 
     std::string typefilepath = directorypath + "/supported_types";
     std::string supported_in_types;
     std::string supported_out_types;
-    std::string output_file_ext = getExtension(output_file);
     std::string input_file_ext = getExtension(input_file);
     std::vector<std::string> optionsVector;
     for (const auto& entry : std::filesystem::directory_iterator(typefilepath)) {

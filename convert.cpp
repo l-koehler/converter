@@ -92,7 +92,7 @@ private slots:
         std::string input_file = path_textbox_in->text().toStdString();
         std::string output_file = path_textbox_out->text().toStdString();
 
-        std::vector<std::string> optionsVector = getPossibleOutput(input_file, output_file);
+        std::vector<std::string> optionsVector = getPossibleOutput(input_file);
 
         options_combobox->clear();
         for (const auto& option : optionsVector) {
@@ -198,7 +198,7 @@ int main(int argc, char *argv[]) {
     } else if (argc >= 2) {
         QApplication app(argc, argv);
         ConverterApp converterApp(argv[1], "");
-            return app.exec();
+        return app.exec();
     } else {
         QApplication app(argc, argv);
         ConverterApp converterApp("", "");

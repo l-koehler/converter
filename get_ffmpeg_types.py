@@ -123,5 +123,12 @@ mux_formats = unmerge(mux_formats)
 
 with open("./supported_types/ffmpeg_types.txt", "w") as file1:
     # Line 1 lists input types, Line 2 lists output types
-    ffmpeg_types_content = "./converters/ffmpeg.py\n" + str(demux_formats) + "\n" + str(mux_formats)
+    write_demux = ""
+    write_mux = ""
+    for format in demux_formats:
+        write_demux = write_demux + " " + format
+    for format in mux_formats:
+        write_mux = write_mux + " " + format
+
+    ffmpeg_types_content = "./converters/ffmpeg.py\n" + write_demux + "\n" + write_mux
     file1.write(ffmpeg_types_content)
