@@ -68,7 +68,7 @@ else:
     else:
         with open("./supported_types/ffmpeg_types.txt", "w") as file1:
             # Line 1 lists input types, Line 2 lists output types
-            file1.write("./converters/ffmpeg.py\n[]\n[]")
+            file1.write("ffmpeg\n[]\n[]")
             print("Set FFmpegs supported In/Output types to none. FFmpeg will not be used.")
             sys.exit(0)
 
@@ -130,5 +130,5 @@ with open("./supported_types/ffmpeg_types.txt", "w") as file1:
     for format in mux_formats:
         write_mux = write_mux + " " + format
 
-    ffmpeg_types_content = "./converters/ffmpeg.py\n" + write_demux + "\n" + write_mux
+    ffmpeg_types_content = "ffmpeg\n" + write_demux + "\n" + write_mux
     file1.write(ffmpeg_types_content)
