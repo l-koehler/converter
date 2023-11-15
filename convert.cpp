@@ -162,6 +162,14 @@ int main(int argc, char *argv[]) {
     }
     
     if (use_gui == false) {
+        if (input_file == "") {
+            std::cout << "Enter a input file path: " << std::endl;
+            std::getline(std::cin, input_file);
+        }
+        if (output_file == "") {
+            std::cout << "Enter a output file path: " << std::endl;
+            std::getline(std::cin, output_file);
+        }
         // Do command line stuff
         convert(input_file, output_file, false);
     } else {

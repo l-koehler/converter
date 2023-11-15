@@ -237,20 +237,32 @@ void convert(const std::string& input_file, const std::string& output_file, cons
         show_error("Error!" , "A unexpected Error occured!" , "A unknown converter was specified by the type file. Prepend custom converters with 'file/'. Example: file/python3 ~/converter.py. " , true);
         std::exit(-1);
     }
-    if (exit_code == 0) {
+    // At this point the file has been passed to the converter and it has finished
+    // Check if the resulting file is empty
+    std::ifstream read(output_file);
+    bool isEmpty = read.peek() == EOF;
+    
+    if (exit_code == 0 and isEmpty == false) {
         if (useGUI == true) {
+            // show_error is a stupid name too lazy to change it rn TODO
             show_error("Success!" , "The file has been converted successfully!" , "" , false);
         } else {
-            std::cout << "Success: The file has been converted!";
+            std::cout << "Success: The file has been converted!" << std::endl;
         }
         std::exit(0);
-    } else {
+    } else if (exit_code != 0){
         if (useGUI == true) {
                 show_error("Error!" , "A unexpected Error occured!" , "The converter was called successfully, but returned a non-zero exit code. " , true);
         } else {
             std::cerr << "Error: The converter was called successfully, but returned a non-zero exit code." << std::endl;
         }
         std::exit(-1);
+    } else {
+        if (useGUI == true) {
+            show_error("Error!" , "A unexpected Error occured!" , "The converter was called successfully and returned 0, but the resulting file is empty. " , true);
+        } else {
+            std::cerr << "Error: The converter was called successfully and returned 0, but the resulting file is empty." << std::endl;
+        }
     }
 }
 
