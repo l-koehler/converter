@@ -147,11 +147,11 @@ int main(int argc, char *argv[]) {
 
     // Check command line arguments (-i, --input, -o, --output, -h, --help, -c, --console)
     std::vector<std::string> args(argv, argv+argc);
-    bool use_gui = True;
+    bool use_gui = true;
     
     for (size_t i = 1; i < args.size(); ++i) {
         if (args[i] == "--console" or args[i] == "-c") {
-            use_gui = False;
+            use_gui = false;
         } else if (args[i] == "--input" or args[i] == "-i") {
             output_file = args[i+1];
         } else if (args[i] == "--output" or args[i] == "-o") {
@@ -161,7 +161,7 @@ int main(int argc, char *argv[]) {
         }
     }
     
-    if (use_gui == False) {
+    if (use_gui == false) {
         // Do command line stuff
         convert(input_file, output_file, false);
     } else {
