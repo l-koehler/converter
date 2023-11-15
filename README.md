@@ -1,57 +1,58 @@
-IMPORTANT: DO NOT USE TO OVERWRITE FILES. This program isnt tested. I just occasionally run it to see if it crashes or not, but I did not try every conversion.
-
-What does this do?
-
-This is a program made to convert files from any format into any
-other format. For now, it supports various formats I added in
-./supported_types. Any format mentioned on the second line of a file
-there can be converted into any format on the third line.
-
-Features:
-
-Almost all Audio/Video formats are supported thanks to FFmpeg.
-
-Most common Document/Image/Slideshow/Spreadsheet formats are supported
-thanks to unoconv.
-
-Most common markup language formats are supported thanks to pandoc.
-
-The converter can integrate with Dolphin, allowing you to convert files
-in the context menu.
-
-How to add a Converter:
-
-1: Create a new file in ./supported_types (your typefile). It can be
-named anything.
-
-2: Create a new program (your converter). It can also
-be named anything. It can be anything, as long as it is executable
-by simply calling it over the command line. A language that should work
-for most purposes here is python.
-
-3: In Line 1 of your typefile, put a path to your converter. This should
-be a relative path. Relative paths start from the converter (./), not from
-./supported_types! Examples:
-file/python3 ./converters/myconverter.py    -- Use the converter ./converters/myconverter.py with python3
-file/./converter.exe                        -- Use the converter 'converter.exe' in the same directory as the compiled main converter.
-It will be fed into the terminal directly with the command line args (see step 6), so you need to make sure your program works when called that way.
-
-4: In Line 2 of your typefile, put a list of formats your
-converter takes as input, separated by spaces.
-
-5: In Line 3 of your typefile, put a list of formats your
-converter can return as output, separated by spaces. It must be possible to convert any format in
-line 2 to any format in line 3! Use multiple files if that is not
-possible.
-
-6: Your converter file needs to read the first and second command line argument.
-These will be the input file path and the desiredoutput file path. Example for python:
-import sys
-input_file_path = sys.argv[1]
-output_file_path = sys.argv[2]
-
-7: In your converter file, ensure that the program exits with either code
-0 (in case of success) or -1 (in case of failure).
-
-If you added formats the software does not cover yet, please make a pull
-request so I can add the converter!
+#### What is this:  
+  
+This program wraps several converters (ffmpeg, pandoc, unoconv) to be able  
+to covert most common files into whatever other file type.  
+You can use either a Qt GUI or the terminal to convert files,  
+or you can add the program to the Dolphin file manager.  
+  
+#### Compatibility:  
+  
+* This should work fully on all GNU/Linux distributions with a GUI.  
+* On GNU/Linux without a GUI, you will need to either modify the source or  
+  install Qt to compile the program, then you will be able to use the  
+  Console-only mode by passing it -c or --console.  
+* On Windows, good luck getting it to run. Without resorting to WSL,  
+  you will have the following problems:  
+  * You will be unable to use the GUI and, since Qt is not available for  
+    Windows, you will need to modify the source to remove all references to Qt.  
+  * Additionally, the program uses system() calls to run code, change   
+    int execSystem to work with the CMD or make it use git bash/WSL.  
+  * The compiling is already more complicated than a simple Makefile.  
+    I do not know if qmake and moc work on Windows.
+  
+#### How to Use (on GNU/Linux):  
+  
+* If you want ffmpeg (Video/Audio support), run  
+  ```python3 ./get_ffmpeg_types.py```. This script will check what  
+  file types are supported by your ffmpeg installation.  
+* Compile the program using ./compile.sh.  
+* Move the resulting ./convert binary and the ./supported_types folder  
+   to somewhere where you can keep and execute these files, commonly  
+  $HOME/.local/bin/converter.  
+* If you want to be able to just run ```convert``` in the terminal, add the  
+  folder with the binary to the $PATH
+* If you want dolphin integration, also move ./add_to_dolphin.sh to the folder  
+  with the binary. Then run ```sudo ./add_to_dolphin.sh``` to install and  
+  uninstall.  
+  
+#### Dependencies:  
+  
+Listed in ./dependencies.md. Most are optional, but you will run into trouble  
+compiling without Qt.  
+  
+#### How to add own converter:
+  
+Example for converting .pdf and .bat files into .AppImage and .h files:  
+Add a file to ./supported_types.  
+  
+* Line 1 of this file must be ```file/pathtoyourconverter```.  
+  Replace pathtoyourconverter with a actual path to the converter.  
+  This can be any executable that takes argv[1] as a path to the input file  
+  and argv[2] as a output path. It should exit with code 0 on successful  
+  conversion and with something else otherwise.  
+* Line 2 must be a space-separated list of allowed input formats,  
+  in this example: ```pdf bat```.  
+* Line 3 is like line 2, just for output formats: ```appimage h```  
+  
+It must be possible to convert any input format into any output format.  
+If this is not possible, use multiple files.  
