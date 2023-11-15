@@ -1,7 +1,8 @@
 // Needed for basic logic and interaction with files
 #include <iostream>
 #include <string>
-#include <filesystem> // only works in C++17 and later, older versions are not supported!
+#include <filesystem> // only works in C++17 and later, older versions are not 
+                      // supported!
 #include <fstream>
 #include <sstream>
 #include <vector>
@@ -23,8 +24,8 @@
 
 #include "functions.h"
 
-// Needed to get the current location of the executable. This is needed to find the typefiles.
-// DEPRECATED! All needed files will be embedded in the executable soon!
+// Needed to get the current location of the executable. This is needed to find
+// the typefiles.
 #ifdef _WIN32
     #include <Windows.h>
     #define GetCurrentPath(buffer, size) GetModuleFileName(NULL, buffer, size)
@@ -33,7 +34,7 @@
     #include <limits.h>
     #define GetCurrentPath(buffer, size) readlink("/proc/self/exe", buffer, size)
 #else
-    #warning "Unknown or less common operating system. The Program may not work as expected. Assuming POSIX compliance."
+    #warning "Unknown or less common operating system. Assuming UNIX-like."
     #include <unistd.h>
     #include <limits.h>
     #define GetCurrentPath(buffer, size) readlink("/proc/self/exe", buffer, size)
@@ -146,48 +147,20 @@ int main(int argc, char *argv[]) {
     std::string input_file = "";
     std::string output_file = "";
 
-    // Check if --nogui is present
-    for (int i = 1; i < argc; ++i) {
-        if (strcmp(argv[i], "--nogui") == 0) {
-            std::cout << "No GUI mode enabled." << std::endl;
-            // Iterate through the command-line arguments
-            for (int i = 1; i < argc; ++i) {
-                // Compare each argument with the "--nogui" flag
-                if (strcmp(argv[i], "--nogui") == 0) {
-                    // Skip "--nogui" arguments
-                    continue;
-                }
-                // Check if input_file has been assigned, if not, assign the current argument to it
-                if (input_file.empty()) {
-                    input_file = argv[i];
-                } else {
-                    // Check if output_file has been assigned, if not, assign the current argument to it
-                    if (output_file.empty()) {
-                        output_file = argv[i];
-                    } else {
-                        // If both arguments are already assigned, break the loop (optional)
-                        break;
-                    }
-                }
-            }
-
-            // Ensure input_file and output_file are set
-            if (!input_file.empty()) {
-                std::cout << "input_file: " << input_file << std::endl;
-            } else {
-                std::cout << "Enter value for input_file: ";
-                std::cin >> input_file;
-            }
-
-            if (!output_file.empty()) {
-                std::cout << "output_file: " << output_file << std::endl;
-            } else {
-                std::cout << "Enter value for output_file: ";
-                std::cin >> output_file;
-            }
-            // input_file and output_file are set now
-            convert(input_file, output_file, false);
+    // Check command line arguments (-i, --input, -o, --output, -h, --help, -c, --console)
+    std::vector<std::string> args(argv, argv+argc);
+    std::bool use_gui = True;
+    for (size_t i = 1; i < args.size(); ++i) {
+        if (args[i] == "--console" or args[i] == "-c") {
+            use_gui = False;
+        } else if (args[i] == "--input" or args[i] == "-i") {
+            output_file = args[i+1];
+        } else if (args[i] == "--output" or args[i] == "-o") {
+            input_file = args[i+1];
+        } else if (args[i] == "--help" or args[i] == "-h") {
+            help();
         }
+      
     }
     // --nogui is not present, use the GUI
 

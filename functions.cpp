@@ -253,3 +253,12 @@ void convert(const std::string& input_file, const std::string& output_file, cons
         std::exit(-1);
     }
 }
+
+void help() {
+    std::cout << "Available Arguments:"
+    << "\n-i (--input): Pass a file as input. In console mode you will be prompted to enter a path if this is missing"
+    << "\n-o (--output): Pass a file path to write the output to. Likewith input, you will be prompted if missing"
+    << "\n-c (--console): When passed, no graphical interface will start, instead the console will be used"
+    << "\n-h (--help): Display this help, then exit" << std::endl;
+    std::exit(0);
+}

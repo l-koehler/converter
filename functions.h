@@ -16,6 +16,6 @@ std::vector<std::string> getPossibleOutput(const std::string& input_file);
 std::string getConverter(const std::string& input_file, const std::string& output_file);
 
 void convert(const std::string& input_file, const std::string& output_file, const bool& useGUI);
-
+void help();
 
 #endif // FUNCTIONS_H
