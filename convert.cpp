@@ -127,8 +127,6 @@ private slots:
         std::string input_file = path_textbox_in->text().toStdString();
         std::string output_file = path_textbox_out->text().toStdString();
 
-        std::string converter = getConverter(input_file, output_file);
-
         convert(input_file, output_file, true);
     }
 
@@ -150,6 +148,7 @@ int main(int argc, char *argv[]) {
     // Check command line arguments (-i, --input, -o, --output, -h, --help, -c, --console)
     std::vector<std::string> args(argv, argv+argc);
     std::bool use_gui = True;
+    
     for (size_t i = 1; i < args.size(); ++i) {
         if (args[i] == "--console" or args[i] == "-c") {
             use_gui = False;
@@ -160,23 +159,29 @@ int main(int argc, char *argv[]) {
         } else if (args[i] == "--help" or args[i] == "-h") {
             help();
         }
-      
     }
-    // --nogui is not present, use the GUI
-
-    if (argc >= 3) {
-        QApplication app(argc, argv);
-        ConverterApp converterApp(argv[1], argv[2]);
-        return app.exec();
-    } else if (argc >= 2) {
-        QApplication app(argc, argv);
-        ConverterApp converterApp(argv[1], "");
-        return app.exec();
+    
+    if (use_gui == False) {
+        // Do command line stuff
+        convert(input_file, output_file);
     } else {
-        QApplication app(argc, argv);
-        ConverterApp converterApp("", "");
-        return app.exec();
+        // Convert with GUI
+        if (argc >= 3) {
+            QApplication app(argc, argv);
+            ConverterApp converterApp(argv[1], argv[2]);
+            return app.exec();
+        } else if (argc >= 2) {
+            QApplication app(argc, argv);
+            ConverterApp converterApp(argv[1], "");
+            return app.exec();
+        } else {
+            QApplication app(argc, argv);
+            ConverterApp converterApp("", "");
+            return app.exec();
+        }
     }
+    
+
 
 }
 #include "main.moc"
