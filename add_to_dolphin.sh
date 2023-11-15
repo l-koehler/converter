@@ -2,7 +2,8 @@
 
 # Check if the script is running as root
 if [ "$(id -u)" -ne 0 ]; then
-  # If not running as root, restart the script with elevated privileges using sudo
+  # If not running as root, restart the script
+  # with elevated privileges using sudo
   echo "This script requires root privileges. Restarting with sudo..."
   sudo "$0" "$@"
   exit $?
@@ -32,7 +33,8 @@ select_action() {
         echo "Uninstalling..."
         uninstall
     else
-        echo "You pressed '$key'. Not a recognized key. Press either [1] or [2]."
+        echo "You pressed '$key'. Not a recognized key. \
+        Press either [1] or [2]."
         select_action
     fi
 }
@@ -42,7 +44,9 @@ install() {
     cd "$servicemenus_path"
     command_on_convert="sh -c \"$script_dir/convert '"%U"'\""
     file="convert.desktop"
-    filecontent="[Desktop Entry]\nType=Service\nMimeType=application/octet-stream;\nActions=convert\n\n[Desktop Action convert]\nName=Convert File\nIcon=inode-x-generic\nExec=$command_on_convert"
+    filecontent="[Desktop Entry]\nType=Service\nMimeType=application/octet-\
+    stream;\nActions=convert\n\n[Desktop Action convert]\nName=Convert File\
+    \nIcon=inode-x-generic\nExec=$command_on_convert"
     echo -e "$filecontent" > "$file"
     chmod +x "$file"
     exit_script
