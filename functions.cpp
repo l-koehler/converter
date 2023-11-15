@@ -228,6 +228,7 @@ void convert(const std::string& input_file, const std::string& output_file, cons
         exit_code = execSystem(std::string("unoconv \"" + input_file + "\" \"" + output_file + "\""));
     } else if (converter == "pandoc") {
         // use pandoc for conversion
+        show_error("Broken!" , "Pandoc support is currently not working!" , "" , true);
         exit_code = execSystem(std::string("pandoc \"" + input_file + "\" -o \"" + output_file + "\""));
     } else if (converter.find("file/") == 0) {
         // use other converter
