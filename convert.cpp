@@ -23,6 +23,7 @@
 #include <QMessageBox>
 
 #include "functions.h"
+#include "converter_specific.h"
 
 // Needed to get the current location of the executable. This is needed to find
 // the typefiles.
@@ -34,7 +35,7 @@
     #include <limits.h>
     #define GetCurrentPath(buffer, size) readlink("/proc/self/exe", buffer, size)
 #else
-    #warning "Unknown or less common operating system. Assuming UNIX-like."
+    #warning "Unknown or less common operating system. Assuming POSIX."
     #include <unistd.h>
     #include <limits.h>
     #define GetCurrentPath(buffer, size) readlink("/proc/self/exe", buffer, size)
@@ -127,7 +128,40 @@ private slots:
         std::string input_file = path_textbox_in->text().toStdString();
         std::string output_file = path_textbox_out->text().toStdString();
 
-        convert(input_file, output_file, true);
+        // convert using gui
+        std::string converter = getConverter(input_file, output_file);
+        if (converter == "") {
+            show_error("Error!", "A unexpected Error occured!", "No converter found. Conversion is not possible.", true, true);
+            std::exit(-1);
+        }
+        // converter is set
+        int exit_code;
+        if (converter == "ffmpeg") {
+            exit_code = ffmpeg(input_file, output_file);
+        } else if (converter == "soffice") {
+            exit_code = soffice(input_file, output_file);
+        } else if (converter == "pandoc") {
+            exit_code = pandoc(input_file, output_file);
+        } else if (converter.find("file/") == 0) {
+            // use other converter
+            converter.erase(0, 5);
+            exit_code = execSystem(std::string(converter + " \"" + input_file + "\" \"" + output_file + "\""));
+        } else {
+            show_error("Error!" , "A unexpected Error occured!" , "A unknown converter was specified by the type file. Prepend custom converters with 'file/'. Example: file/python3 ~/converter.py. " , true, true);
+            std::exit(-1);
+        }
+        std::ifstream read(output_file);
+        bool isEmpty = read.peek() == EOF;
+        
+        if (exit_code == 0 and isEmpty == false) {
+            show_error("Success!" , "The file has been converted successfully!" , "" , false, true);
+            std::exit(0);
+        } else if (exit_code != 0){
+            show_error("Error!" , "A unexpected Error occured!" , "The converter was called successfully, but returned a non-zero exit code. " , true, true);
+            std::exit(-1);
+        } else {
+            show_error("Error!" , "A unexpected Error occured!" , "The converter was called successfully and returned 0, but the resulting file is empty. " , true, true);
+        }
     }
 
 // Set the variables that represent the GUI elements.
@@ -161,6 +195,7 @@ int main(int argc, char *argv[]) {
         }
     }
     
+    // use_gui, input_file and output_file are set
     if (use_gui == false) {
         if (input_file == "") {
             std::cout << "Enter a input file path: " << std::endl;
@@ -170,8 +205,39 @@ int main(int argc, char *argv[]) {
             std::cout << "Enter a output file path: " << std::endl;
             std::getline(std::cin, output_file);
         }
-        // Do command line stuff
-        convert(input_file, output_file, false);
+        std::string converter = getConverter(input_file, output_file);
+        if (converter == "") {
+            show_error("Error!", "A unexpected Error occured!", "No converter found. Conversion is not possible.", true, use_gui);
+            std::exit(-1);
+        }
+        // converter is set
+        int exit_code;
+        if (converter == "ffmpeg") {
+            exit_code = ffmpeg(input_file, output_file);
+        } else if (converter == "soffice") {
+            exit_code = soffice(input_file, output_file);
+        } else if (converter == "pandoc") {
+            exit_code = pandoc(input_file, output_file);
+        } else if (converter.find("file/") == 0) {
+            // use other converter
+            converter.erase(0, 5);
+            exit_code = execSystem(std::string(converter + " \"" + input_file + "\" \"" + output_file + "\""));
+        } else {
+            show_error("Error!" , "A unexpected Error occured!" , "A unknown converter was specified by the type file. Prepend custom converters with 'file/'. Example: file/python3 ~/converter.py. " , true, use_gui);
+            std::exit(-1);
+        }
+        std::ifstream read(output_file);
+        bool isEmpty = read.peek() == EOF;
+        
+        if (exit_code == 0 and isEmpty == false) {
+            show_error("Success!" , "The file has been converted successfully!" , "" , false, use_gui);
+            std::exit(0);
+        } else if (exit_code != 0){
+            show_error("Error!" , "A unexpected Error occured!" , "The converter was called successfully, but returned a non-zero exit code. " , true, use_gui);
+            std::exit(-1);
+        } else {
+            show_error("Error!" , "A unexpected Error occured!" , "The converter was called successfully and returned 0, but the resulting file is empty. " , true, use_gui);
+        }
     } else {
         // Convert with GUI
         if (argc >= 3) {
@@ -188,8 +254,5 @@ int main(int argc, char *argv[]) {
             return app.exec();
         }
     }
-    
-
-
 }
 #include "main.moc"

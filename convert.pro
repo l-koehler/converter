@@ -3,7 +3,9 @@
 QT += widgets
 
 SOURCES += convert.cpp \
-           functions.cpp
-HEADERS += functions.h
+           functions.cpp \
+           converter_specific.cpp
+HEADERS += functions.h \
+           converter_specific.h
 
 TARGET = convert

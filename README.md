@@ -19,6 +19,8 @@ or you can add the program to the Dolphin file manager.
     int execSystem to work with the CMD or make it use git bash/WSL.  
   * The compiling is already more complicated than a simple Makefile.  
     I do not know if qmake and moc work on Windows.
+  * The conversion with LibreOffice (soffice) uses /tmp/, which is specified  
+    by POSIX and not a thing on Windows.  
   
 #### How to Use (on GNU/Linux):  
   
