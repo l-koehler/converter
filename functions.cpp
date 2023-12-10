@@ -7,6 +7,9 @@
 #include <vector>
 #include <set>
 #include <algorithm>
+#include <unistd.h>
+#include <limits.h>
+#define GetCurrentPath(buffer, size) readlink("/proc/self/exe", buffer, size)
 
 #include <QApplication>
 #include <QWidget>
@@ -21,25 +24,7 @@
 
 #include "functions.h"
 
-// Needed to get the current location of the executable. This is needed to find the typefiles.
-// DEPRECATED! All needed files will be embedded in the executable soon!
-#ifdef _WIN32
-    #include <Windows.h>
-    #define GetCurrentPath(buffer, size) GetModuleFileName(NULL, buffer, size)
-#elif __linux__ || __APPLE__ || __unix__ || defined(__posix)
-    #include <unistd.h>
-    #include <limits.h>
-    #define GetCurrentPath(buffer, size) readlink("/proc/self/exe", buffer, size)
-#else
-    #warning "Unknown or less common operating system. The Program may not work as expected. Assuming POSIX compliance."
-    #include <unistd.h>
-    #include <limits.h>
-    #define GetCurrentPath(buffer, size) readlink("/proc/self/exe", buffer, size)
-#endif
-
 // Declare various functions used in convert.cpp
-
-
 std::string getCurrentFilePath() {
     char buffer[PATH_MAX];
     ssize_t len = GetCurrentPath(buffer, sizeof(buffer) - 1);
@@ -120,6 +105,8 @@ std::string removeExtension(const std::string& filePath) {
 }
 
 int execSystem(const std::string& command) {
+    // TODO: Inherently and unavoidably unsafe.
+    // Call the binary directly instead.
     // Use system() to run the command and get the return code
     int returnCode = system(command.c_str());
 
@@ -131,6 +118,33 @@ int execSystem(const std::string& command) {
         // Extract the exit code (the lower 8 bits) from the return value
         return returnCode & 0xFF;
     }
+}
+
+std::string getBasename(const std::string &filename) {
+    if (filename.empty()) {
+        return {};
+    }
+    auto len = filename.length();
+    auto index = filename.find_last_of("/\\");
+    
+    if (index == std::string::npos) {
+        return filename;
+    }
+    if (index + 1 >= len) {
+        len--;
+        index = filename.substr(0, len).find_last_of("/\\");
+        if (len == 0) {
+            return filename;
+        }
+        if (index == 0) {
+            return filename.substr(1, len - 1);
+        }
+        if (index == std::string::npos) {
+            return filename.substr(0, len);
+        }
+        return filename.substr(index + 1, len - index - 1);
+    }
+    return filename.substr(index + 1, len - index);
 }
 
 std::vector<std::string> getPossibleOutput(const std::string& input_file) {
@@ -160,8 +174,8 @@ std::vector<std::string> getPossibleOutput(const std::string& input_file) {
             // currently iterating over typefiles, filename is the current file name.
             supported_in_types = readNthLine(file_path, 2);
             supported_out_types = readNthLine(file_path, 3);
-            if (supported_in_types.find(" "+input_file_ext) != std::string::npos) {
-                //std::cout << "Found Converter: " << readNthLine(file_path, 1) << std::endl;
+            if (supported_in_types.find(" "+input_file_ext) != std::string::npos || supported_in_types.find(input_file_ext+" ") != std::string::npos) {
+                //std::cout << "Found available Converter: " << readNthLine(file_path, 1) << std::endl;
                 std::istringstream iss(supported_out_types);
                 std::string item;
                 // Split the string and store unique elements in optionsVector
@@ -206,8 +220,10 @@ std::string getConverter(const std::string& input_file, const std::string& outpu
             // currently iterating over typefiles, filename is the current file name.
             supported_in_types = readNthLine(file_path, 2);
             supported_out_types = readNthLine(file_path, 3);
-            if (supported_in_types.find(" "+input_file_ext) != std::string::npos && supported_out_types.find(" "+output_file_ext) != std::string::npos) {
-                converter = readNthLine(file_path, 1);
+            if (     supported_in_types.find(" "+input_file_ext)  != std::string::npos ||  supported_in_types.find( input_file_ext+" ") != std::string::npos) {
+                if (supported_out_types.find(" "+output_file_ext) != std::string::npos || supported_out_types.find(output_file_ext+" ") != std::string::npos) {
+                    converter = readNthLine(file_path, 1);
+                }
             }
         }
     }

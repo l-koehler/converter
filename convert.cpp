@@ -154,10 +154,10 @@ private slots:
         bool isEmpty = read.peek() == EOF;
         
         if (exit_code == 0 and isEmpty == false) {
-            show_error("Success!" , "The file has been converted successfully!" , "" , false, true);
+            show_error("Success!" , "The file has been converted successfully! Exit Code: 0" , "" , false, true);
             std::exit(0);
         } else if (exit_code != 0){
-            show_error("Error!" , "A unexpected Error occured!" , "The converter was called successfully, but returned a non-zero exit code. " , true, true);
+            show_error("Error!" , "A unexpected Error occured!" , "The converter was called successfully, but returned a non-zero exit code. Exit Code: " + exit_code , true, true);
             std::exit(-1);
         } else {
             show_error("Error!" , "A unexpected Error occured!" , "The converter was called successfully and returned 0, but the resulting file is empty. " , true, true);
