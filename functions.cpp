@@ -108,22 +108,6 @@ string removeExtension(const string& filePath) {
     return filePath;
 }
 
-int execSystem(const string& command) {
-    // TODO: Inherently and unavoidably unsafe.
-    // TODO: Remove
-    // Use system() to run the command and get the return code
-    int returnCode = system(command.c_str());
-
-    // Extract the exit code from the return value
-    if (returnCode == -1) {
-        // An error occurred while trying to execute the command
-        return -1;
-    } else {
-        // Extract the exit code (the lower 8 bits) from the return value
-        return returnCode & 0xFF;
-    }
-}
-
 int execvpString(const vector<string>& cmdline) {
     // convert vector<string>& to vector<const char*>
     vector<const char*> argv;
