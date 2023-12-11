@@ -11,20 +11,11 @@ or you can add the program to the Dolphin file manager.
 * On GNU/Linux without a GUI, you will need to either modify the source or  
   install Qt to compile the program, then you will be able to use the  
   Console-only mode by passing it -c or --console.  
-* On Windows, good luck getting it to run. Without resorting to WSL,  
-  you will have the following problems:  
-  * You will be unable to use the GUI and, since Qt is not available for  
-    Windows, you will need to modify the source to remove all references to Qt.  
-  * Additionally, the program uses system() calls to run code, change   
-    int execSystem to work with the CMD or make it use git bash/WSL.  
-  * The compiling is already more complicated than a simple Makefile.  
-    I do not know if qmake and moc work on Windows.
-  * The conversion with LibreOffice (soffice) uses /tmp/, which is specified  
-    by POSIX and not a thing on Windows.  
+* Windows not supported.  
   
-#### How to Use (on GNU/Linux):  
+#### How to use:  
   
-* If you want ffmpeg (Video/Audio support), run  
+* If you want to use ffmpeg (Video/Audio support), run  
   ```python3 ./get_ffmpeg_types.py```. This script will check what  
   file types are supported by your ffmpeg installation.  
 * Compile the program using ./compile.sh.  
@@ -47,8 +38,8 @@ compiling without Qt.
 Example for converting .pdf and .bat files into .AppImage and .h files:  
 Add a file to ./supported_types.  
   
-* Line 1 of this file must be ```file/pathtoyourconverter```.  
-  Replace pathtoyourconverter with a actual path to the converter.  
+* Line 1 of this file must be ```!command```.  
+  Replace command with an actual command on your $PATH.  
   This can be any executable that takes argv[1] as a path to the input file  
   and argv[2] as a output path. It should exit with code 0 on successful  
   conversion and with something else otherwise.  

@@ -143,16 +143,14 @@ private slots:
             exit_code = soffice(input_file, output_file);
         } else if (converter == "pandoc") {
             exit_code = pandoc(input_file, output_file);
-        } else if (converter.find("file/") == 0) {
+        } else if (converter.find("!") == 0) {
             // use other converter
-            converter.erase(0, 5);
-            // TODO: execvp call
-            exit_code = execSystem(string(converter + " \"" + input_file + "\" \"" + output_file + "\""));
+            converter.erase(0, 1);
+            exit_code = userdefined(converter, input_file, output_file);
         } else {
-            show_error("Error!" , "A unexpected Error occured!" ,
-                       "A unknown converter was specified by the type file.\
-                       Prepend custom converters with 'file/'\
-                       Example: file/python3 ~/converter.py.",
+            show_error("Error!", "A unexpected Error occured!",
+"A unknown converter was specified by the type file.\n\
+See the README on how to define your own converter.", 
                        true, true); // is_error, use_gui
             exit(-1);
         }
@@ -160,19 +158,21 @@ private slots:
         bool isEmpty = read.peek() == EOF;
         
         if (exit_code == 0 and isEmpty == false) {
-            show_error("Success!" , "The file has been converted successfully!\
-            Exit Code: 0", "" , false, true); // is_error, use_gui
+            show_error("Success!",
+"The file has been converted successfully!\n\
+Exit Code: 0",
+                       "" , false, true); // is_error, use_gui
             exit(0);
         } else if (exit_code != 0){
             show_error("Error!", "A unexpected Error occured!",
-                       "The converter was called successfully, but returned a\
-                       non-zero exit code. Exit Code: " + exit_code,
+"The converter was called successfully, but returned a\n\
+non-zero exit code. Exit Code: " + exit_code,
                        true, true); // is_error, use_gui
             exit(-1);
         } else {
             show_error("Error!", "A unexpected Error occured!",
-                       "The converter was called successfully and returned 0, \
-                       but the resulting file is empty.",
+"The converter was called successfully and returned 0,\n\
+but the resulting file is empty.",
                        true, true); // is_error, use_gui
         }
     }
@@ -235,16 +235,14 @@ int main(int argc, char *argv[]) {
             exit_code = soffice(input_file, output_file);
         } else if (converter == "pandoc") {
             exit_code = pandoc(input_file, output_file);
-        } else if (converter.find("file/") == 0) {
+        } else if (converter.find("!") == 0) {
             // use other converter
-            converter.erase(0, 5);
-            // TODO: execvp call
-            exit_code = execSystem(string(converter + " \"" + input_file + "\" \"" + output_file + "\""));
+            converter.erase(0, 1);
+            exit_code = userdefined(converter, input_file, output_file);
         } else {
             show_error("Error!", "A unexpected Error occured!",
-                       "A unknown converter was specified by the type file. \
-                       Prepend custom converters with 'file/'. \
-                       Example: file/python3 ~/converter.py.",
+"A unknown converter was specified by the type file.\n\
+See the README on how to define your own converter.", 
                        true, false); // is_error, use_gui
             exit(-1);
         }
@@ -258,18 +256,18 @@ int main(int argc, char *argv[]) {
             exit(0);
         } else if (exit_code != 0){
             show_error("Error!", "A unexpected Error occured!",
-                       "The converter was called successfully, but returned a \
-                       non-zero exit code.",
+"The converter was called successfully, but returned a \
+non-zero exit code.",
                        true, false); // is_error, use_gui
             exit(-1);
         } else {
             show_error("Error!", "A unexpected Error occured!",
-                       "The converter was called successfully and returned 0, \
-                       but the resulting file is empty.",
+"The converter was called successfully and returned 0, \
+but the resulting file is empty.",
                        true, false); // is_error, use_gui
         }
     } else {
-        // Start the GUI, the convert function for the GUI is at line 110
+        // Start the GUI, the convert function for the GUI is at line 125
         if (argc >= 3) {
             QApplication app(argc, argv);
             ConverterApp converterApp(argv[1], argv[2]);

@@ -16,35 +16,21 @@
 
 using namespace std;
 
+int userdefined(const string& command,
+           const string& input_file, const string& output_file) {
+    // command is the command in the custom typefile
+    vector<string> argument_list {command, input_file, output_file};
+    return execvpString(argument_list);
+}
+
 int ffmpeg(const string& input_file, const string& output_file) {
-    const char* const argument_list[] = {
-        "ffmpeg",
-        "-i", input_file.c_str(),
-        output_file.c_str(),
-        nullptr
-    };
-    int status;
-    cout << "Forking..." << endl;
-    int pid = fork();
-    if (!pid) {
-        execvp(argument_list[0], const_cast<char*const*>(argument_list));
-    }
-    waitpid(pid, &status, 0);
-    cout << "Converter thread done." << endl;
-    if (WIFEXITED(status)) {
-        int exit_status = WEXITSTATUS(status);
-        return exit_status;
-    }
-    return -1;
+    vector<string> argument_list {"ffmpeg", "-i", input_file, output_file};
+    return execvpString(argument_list); // execvpString returns the exit code
 }
 
 int pandoc(const string& input_file, const string& output_file) {
-    vector<string> argument_list[] = {
-        "pandoc",
-        input_file.c_str(),
-        "-o", output_file.c_str(),
-        nullptr
-    };
+    vector<string> argument_list {"pandoc", "-o", output_file, input_file};
+    return execvpString(argument_list);
 }
 
 int soffice(const string& input_file, const string& output_file) {
