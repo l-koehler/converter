@@ -29,7 +29,8 @@ int ffmpeg(const string& input_file, const string& output_file) {
 }
 
 int pandoc(const string& input_file, const string& output_file) {
-    vector<string> argument_list {"pandoc", "-o", output_file, input_file};
+    vector<string> argument_list {"pandoc", "-s", input_file,
+        "-o", output_file};
     return execvpString(argument_list);
 }
 

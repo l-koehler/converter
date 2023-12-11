@@ -68,7 +68,7 @@ else:
     else:
         with open("./supported_types/ffmpeg_types.txt", "w") as file1:
             # Line 1 lists input types, Line 2 lists output types
-            file1.write("ffmpeg\n[]\n[]")
+            file1.write("ffmpeg\n \n ")
             print("Set FFmpegs supported In/Output types to none. FFmpeg will not be used.")
             sys.exit(0)
 
