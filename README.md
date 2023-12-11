@@ -27,6 +27,8 @@ or you can add the program to the Dolphin file manager.
 * If you want dolphin integration, also move ./add_to_dolphin.sh to the folder  
   with the binary. Then run ```sudo ./add_to_dolphin.sh``` to install and  
   uninstall.  
+* To disable a converter, delete its file(s)  
+  (e.g. `./supported_types/pandoc_types.txt` to disable pandoc)  
   
 #### Dependencies:  
   
