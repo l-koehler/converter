@@ -3,8 +3,10 @@
 
 #include <string>
 
-int ffmpeg(const std::string& input_file, const std::string& output_file);
-int pandoc(const std::string& input_file, const std::string& output_file);
-int soffice(const std::string& input_file, const std::string& output_file);
+using namespace std;
+
+int ffmpeg(const string& input_file, const string& output_file);
+int pandoc(const string& input_file, const string& output_file);
+int soffice(const string& input_file, const string& output_file);
 
 #endif

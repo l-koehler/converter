@@ -25,51 +25,46 @@
 #include "functions.h"
 #include "converter_specific.h"
 
-// Needed to get the current location of the executable. This is needed to find
-// the typefiles.
-#ifdef _WIN32
-    #include <Windows.h>
-    #define GetCurrentPath(buffer, size) GetModuleFileName(NULL, buffer, size)
-#elif __linux__ || __APPLE__ || __unix__ || defined(__posix)
-    #include <unistd.h>
-    #include <limits.h>
-    #define GetCurrentPath(buffer, size) readlink("/proc/self/exe", buffer, size)
-#else
-    #warning "Unknown or less common operating system. Assuming POSIX."
-    #include <unistd.h>
-    #include <limits.h>
-    #define GetCurrentPath(buffer, size) readlink("/proc/self/exe", buffer, size)
-#endif
+using namespace std;
 
 // this Class contains the GUI Program
 class ConverterApp : public QWidget {
     Q_OBJECT
 
 public:
-    // This defines the layout of the GUI, make changes here to change the user interfase.
-    ConverterApp(const std::string& file_input = "", const std::string& file_output = "", QWidget *parent = nullptr) : QWidget(parent) {
+    // This defines the layout of the GUI
+    // make changes here to change the user interfase.
+    ConverterApp(const string& file_input = "",
+                 const string& file_output = "",
+                 QWidget *parent = nullptr) : QWidget(parent) {
         // Title
         setWindowTitle("File Converter");
 
         // Text boxes
         path_textbox_in = new QLineEdit(this);
         path_textbox_in->setText(QString::fromStdString(file_input));
-        connect(path_textbox_in, &QLineEdit::textChanged, this, &ConverterApp::setDropdownChoices);
-        connect(path_textbox_in, &QLineEdit::textChanged, this, &ConverterApp::setOutputPath);
+        connect(path_textbox_in, &QLineEdit::textChanged, this,
+                &ConverterApp::setDropdownChoices);
+        connect(path_textbox_in, &QLineEdit::textChanged, this,
+                &ConverterApp::setOutputPath);
         path_textbox_out = new QLineEdit(this);
         path_textbox_out->setText(QString::fromStdString(file_output));
 
         // Browse button
         browse_button = new QPushButton("Browse", this);
-        connect(browse_button, &QPushButton::clicked, this, &ConverterApp::browseFile);
+        connect(browse_button, &QPushButton::clicked, this,
+                &ConverterApp::browseFile);
 
         // Drop-down menu (ComboBox)
         options_combobox = new QComboBox(this);
-        connect(options_combobox, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentTextChanged), this, &ConverterApp::setOutputPath);
+        connect(options_combobox, static_cast<void (QComboBox::*)
+            (const QString &)>(&QComboBox::currentTextChanged), this,
+            &ConverterApp::setOutputPath);
 
         // Confirm button
         confirm_button = new QPushButton("Confirm", this);
-        connect(confirm_button, &QPushButton::clicked, this, &ConverterApp::startConversion);
+        connect(confirm_button, &QPushButton::clicked, this,
+                &ConverterApp::startConversion);
 
         // Layout setup
         QVBoxLayout *layout = new QVBoxLayout(this);
@@ -86,15 +81,16 @@ public:
         show();
     }
 
-// Various functions the GUI program uses.
-// The --nogui program has those separately, changes here will only affect the GUI Program.
+// Various functions the GUI program requires.
 private slots:
-    // Gets called each time the Input Text box changes content. Takes the extension and checks for possible output extensions, then lists those in the dropdown menu.
+    // Gets called each time the Input Text box changes content.
+    // Takes the extension and checks for possible output extensions,
+    // then lists those in the dropdown menu.
     void setDropdownChoices() {
-        std::string input_file = path_textbox_in->text().toStdString();
-        std::string output_file = path_textbox_out->text().toStdString();
+        string input_file = path_textbox_in->text().toStdString();
+        string output_file = path_textbox_out->text().toStdString();
 
-        std::vector<std::string> optionsVector = getPossibleOutput(input_file);
+        vector<string> optionsVector = getPossibleOutput(input_file);
 
         options_combobox->clear();
         for (const auto& option : optionsVector) {
@@ -102,19 +98,22 @@ private slots:
         }
     }
 
-    // Gets called each time the Input Text box or the dropdown menu changes content. WARNING: This might be redundant, one of these triggers might get removed. Updates the path to the output file to reflect
-    // the path to the input file, but with the extension selected by the dropdown menu.
+    // Gets called each time the Input Text box or the dropdown menu changes.
     void setOutputPath() {
-        std::string textbox_in_content = path_textbox_in->text().toStdString();
-        std::string input_path_filename = removeExtension(textbox_in_content);
-        std::string textbox_out_content = input_path_filename + "." + options_combobox->currentText().toStdString();
+        string textbox_in_content = path_textbox_in->text().toStdString();
+        string input_path_filename = removeExtension(textbox_in_content);
+        string textbox_out_content = input_path_filename + "." +
+            options_combobox->currentText().toStdString();
         path_textbox_out->setText(QString::fromStdString(textbox_out_content));
     }
 
-    // Gets called whenever the user clicks on the file chooser button. Sets the selected file to be the input path.
+    // Gets called whenever the user clicks on the file chooser button.
+    // Sets the selected path as the content of the path input textbox.
     void browseFile() {
         // Open a file dialog to browse for the input file
-        QString file_path = QFileDialog::getOpenFileName(this, "Select Input File", "", "All Files (*.*);;Text Files (*.txt)");
+        QString file_path = QFileDialog::getOpenFileName(
+            this, "Select Input File", "",
+            "All Files (*.*);;Text Files (*.txt)");
         // Check if a file was selected
         if (!file_path.isEmpty()) {
             // Set the selected file path in the input text box
@@ -125,14 +124,16 @@ private slots:
     // Gets called when the User clicks Convert.
     void startConversion() {
         // Implement the conversion logic.
-        std::string input_file = path_textbox_in->text().toStdString();
-        std::string output_file = path_textbox_out->text().toStdString();
+        string input_file = path_textbox_in->text().toStdString();
+        string output_file = path_textbox_out->text().toStdString();
 
         // convert using gui
-        std::string converter = getConverter(input_file, output_file);
+        string converter = getConverter(input_file, output_file);
         if (converter == "") {
-            show_error("Error!", "A unexpected Error occured!", "No converter found. Conversion is not possible.", true, true);
-            std::exit(-1);
+            show_error("Error!", "A unexpected Error occured!",
+                       "No converter found. Conversion is not possible.",
+                       true, true); // is_error, use_gui
+            exit(-1);
         }
         // converter is set
         int exit_code;
@@ -145,22 +146,34 @@ private slots:
         } else if (converter.find("file/") == 0) {
             // use other converter
             converter.erase(0, 5);
-            exit_code = execSystem(std::string(converter + " \"" + input_file + "\" \"" + output_file + "\""));
+            // TODO: execvp call
+            exit_code = execSystem(string(converter + " \"" + input_file + "\" \"" + output_file + "\""));
         } else {
-            show_error("Error!" , "A unexpected Error occured!" , "A unknown converter was specified by the type file. Prepend custom converters with 'file/'. Example: file/python3 ~/converter.py. " , true, true);
-            std::exit(-1);
+            show_error("Error!" , "A unexpected Error occured!" ,
+                       "A unknown converter was specified by the type file.\
+                       Prepend custom converters with 'file/'\
+                       Example: file/python3 ~/converter.py.",
+                       true, true); // is_error, use_gui
+            exit(-1);
         }
-        std::ifstream read(output_file);
+        ifstream read(output_file);
         bool isEmpty = read.peek() == EOF;
         
         if (exit_code == 0 and isEmpty == false) {
-            show_error("Success!" , "The file has been converted successfully! Exit Code: 0" , "" , false, true);
-            std::exit(0);
+            show_error("Success!" , "The file has been converted successfully!\
+            Exit Code: 0", "" , false, true); // is_error, use_gui
+            exit(0);
         } else if (exit_code != 0){
-            show_error("Error!" , "A unexpected Error occured!" , "The converter was called successfully, but returned a non-zero exit code. Exit Code: " + exit_code , true, true);
-            std::exit(-1);
+            show_error("Error!", "A unexpected Error occured!",
+                       "The converter was called successfully, but returned a\
+                       non-zero exit code. Exit Code: " + exit_code,
+                       true, true); // is_error, use_gui
+            exit(-1);
         } else {
-            show_error("Error!" , "A unexpected Error occured!" , "The converter was called successfully and returned 0, but the resulting file is empty. " , true, true);
+            show_error("Error!", "A unexpected Error occured!",
+                       "The converter was called successfully and returned 0, \
+                       but the resulting file is empty.",
+                       true, true); // is_error, use_gui
         }
     }
 
@@ -176,11 +189,12 @@ private:
 // main function, either converts without GUI or calls the GUI application.
 int main(int argc, char *argv[]) {
 
-    std::string input_file = "";
-    std::string output_file = "";
+    string input_file = "";
+    string output_file = "";
 
-    // Check command line arguments (-i, --input, -o, --output, -h, --help, -c, --console)
-    std::vector<std::string> args(argv, argv+argc);
+    // Check command line arguments
+    // (-i, --input, -o, --output, -h, --help, -c, --console)
+    vector<string> args(argv, argv+argc);
     bool use_gui = true;
     
     for (size_t i = 1; i < args.size(); ++i) {
@@ -197,20 +211,23 @@ int main(int argc, char *argv[]) {
     
     // use_gui, input_file and output_file are set
     if (use_gui == false) {
+        // if use_gui is false, convert using the console
         if (input_file == "") {
-            std::cout << "Enter a input file path: " << std::endl;
-            std::getline(std::cin, input_file);
+            cout << "Enter a input file path: " << endl;
+            getline(cin, input_file);
         }
         if (output_file == "") {
-            std::cout << "Enter a output file path: " << std::endl;
-            std::getline(std::cin, output_file);
+            cout << "Enter a output file path: " << endl;
+            getline(cin, output_file);
         }
-        std::string converter = getConverter(input_file, output_file);
+        string converter = getConverter(input_file, output_file);
         if (converter == "") {
-            show_error("Error!", "A unexpected Error occured!", "No converter found. Conversion is not possible.", true, use_gui);
-            std::exit(-1);
+            show_error("Error!", "A unexpected Error occured!",
+                       "No converter found. Conversion is not possible.",
+                       true, false); // is_error, use_gui
+            exit(-1);
         }
-        // converter is set
+        // converter is set, convert
         int exit_code;
         if (converter == "ffmpeg") {
             exit_code = ffmpeg(input_file, output_file);
@@ -221,25 +238,38 @@ int main(int argc, char *argv[]) {
         } else if (converter.find("file/") == 0) {
             // use other converter
             converter.erase(0, 5);
-            exit_code = execSystem(std::string(converter + " \"" + input_file + "\" \"" + output_file + "\""));
+            // TODO: execvp call
+            exit_code = execSystem(string(converter + " \"" + input_file + "\" \"" + output_file + "\""));
         } else {
-            show_error("Error!" , "A unexpected Error occured!" , "A unknown converter was specified by the type file. Prepend custom converters with 'file/'. Example: file/python3 ~/converter.py. " , true, use_gui);
-            std::exit(-1);
+            show_error("Error!", "A unexpected Error occured!",
+                       "A unknown converter was specified by the type file. \
+                       Prepend custom converters with 'file/'. \
+                       Example: file/python3 ~/converter.py.",
+                       true, false); // is_error, use_gui
+            exit(-1);
         }
-        std::ifstream read(output_file);
+        // check if file is empty, show error if it is
+        ifstream read(output_file);
         bool isEmpty = read.peek() == EOF;
         
         if (exit_code == 0 and isEmpty == false) {
-            show_error("Success!" , "The file has been converted successfully!" , "" , false, use_gui);
-            std::exit(0);
+            show_error("Success!" , "The file has been converted successfully!",
+                       "" , false, false); // is_error, use_gui
+            exit(0);
         } else if (exit_code != 0){
-            show_error("Error!" , "A unexpected Error occured!" , "The converter was called successfully, but returned a non-zero exit code. " , true, use_gui);
-            std::exit(-1);
+            show_error("Error!", "A unexpected Error occured!",
+                       "The converter was called successfully, but returned a \
+                       non-zero exit code.",
+                       true, false); // is_error, use_gui
+            exit(-1);
         } else {
-            show_error("Error!" , "A unexpected Error occured!" , "The converter was called successfully and returned 0, but the resulting file is empty. " , true, use_gui);
+            show_error("Error!", "A unexpected Error occured!",
+                       "The converter was called successfully and returned 0, \
+                       but the resulting file is empty.",
+                       true, false); // is_error, use_gui
         }
     } else {
-        // Convert with GUI
+        // Start the GUI, the convert function for the GUI is at line 110
         if (argc >= 3) {
             QApplication app(argc, argv);
             ConverterApp converterApp(argv[1], argv[2]);
