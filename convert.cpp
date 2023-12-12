@@ -143,6 +143,8 @@ private slots:
             exit_code = soffice(input_file, output_file);
         } else if (converter == "pandoc") {
             exit_code = pandoc(input_file, output_file);
+        } else if (converter == "squashfs") {
+            exit_code = squashfs(input_file, output_file);
         } else if (converter.find("!") == 0) {
             // use other converter
             converter.erase(0, 1);
@@ -235,6 +237,8 @@ int main(int argc, char *argv[]) {
             exit_code = soffice(input_file, output_file);
         } else if (converter == "pandoc") {
             exit_code = pandoc(input_file, output_file);
+        } else if (converter == "squashfs") {
+            exit_code = squashfs(input_file, output_file);
         } else if (converter.find("!") == 0) {
             // use other converter
             converter.erase(0, 1);

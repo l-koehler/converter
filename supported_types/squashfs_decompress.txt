@@ -1,0 +1,3 @@
+squashfs
+ snap squashfs squ sqfs
+ tar tgz
