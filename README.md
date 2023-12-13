@@ -21,13 +21,13 @@ or you can add the program to the Dolphin file manager.
   and will suggest optional packages to install to convert certain files.  
   If you download any of these packages, re-run the script after.  
 * Compile the program using `./compile.sh`.  
-* Now move the files `./convert` and `./add_to_dolphin.sh` and the  
+* Now move the files `./converter-bin` and `./add_to_dolphin.sh` and the  
   directory `./supported_types` to a folder where you can keep it,  
   for example `/opt/converter/`.  
 * You should now add `/opt/converter/` to your $PATH. Do this by adding  
   `export PATH="/opt/converter:$PATH"` to your `~/.bashrc`.  
-* If you want dolphin integration, now run
-  `sudo add_to_dolphin`
+* If you want dolphin integration, now run  
+  `sudo add_to_dolphin`  
   
 #### Dependencies:  
   
@@ -50,3 +50,16 @@ Add a file to ./supported_types.
   
 It must be possible to convert any input format into any output format.  
 If this is not possible, use multiple files.  
+
+#### Supported converters:
+
+This program does not bundle any converters, but instead uses installed  
+packages. This helps keep the size down and the program simple.  
+The following packages are being checked for:  
+
+* ffmpeg - Almost all Music/Video files.  
+* pandoc - Almost all Markdown files, some office formats.  
+* soffice - LibreOffice, almost all office formats, some image formats.  
+* squashfs-tools - Needed for .snap and .squashfs/.sqfs files.  
+* ar - Old file packing tool, needed for .deb and .a/.ar files.  
+* More to be added soon  

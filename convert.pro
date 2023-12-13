@@ -8,4 +8,4 @@ SOURCES += convert.cpp \
 HEADERS += functions.h \
            converter_specific.h
 
-TARGET = convert
+TARGET = converter-bin
