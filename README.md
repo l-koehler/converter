@@ -13,22 +13,21 @@ or you can add the program to the Dolphin file manager.
   Console-only mode by passing it -c or --console.  
 * Windows not supported.  
   
-#### How to use:  
+#### How to compile and use:  
   
-* If you want to use ffmpeg (Video/Audio support), run  
-  ```python3 ./get_ffmpeg_types.py```. This script will check what  
-  file types are supported by your ffmpeg installation.  
+* Clone this repository on your computer and cd into it.
+* First, run `python3 ./get_types.py`. This script will check  
+  what conversions are already supported by packages you have installed  
+  and will suggest optional packages to install to convert certain files.  
+  If you download any of these packages, re-run the script after.  
 * Compile the program using ./compile.sh.  
-* Move the resulting ./convert binary and the ./supported_types folder  
-   to somewhere where you can keep and execute these files, commonly  
-  $HOME/.local/bin/converter.  
-* If you want to be able to just run ```convert``` in the terminal, add the  
-  folder with the binary to the $PATH
-* If you want dolphin integration, also move ./add_to_dolphin.sh to the folder  
-  with the binary. Then run ```sudo ./add_to_dolphin.sh``` to install and  
-  uninstall.  
-* To disable a converter, delete its file(s)  
-  (e.g. `./supported_types/pandoc_types.txt` to disable pandoc)  
+* Now move the files `./convert` and `./add_to_dolphin.sh` and the 
+  directory `./supported_types` to a folder where you can keep it,
+  for example `/opt/converter/`.  
+* You should now add `/opt/converter/` to your $PATH. Do this by adding  
+  `export PATH="/opt/converter:$PATH"` to your `~/.bashrc`.  
+* If you want dolphin integration, now run
+  `sudo add_to_dolphin`
   
 #### Dependencies:  
   
