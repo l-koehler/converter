@@ -10,19 +10,19 @@ or you can add the program to the Dolphin file manager.
 * This should work fully on all GNU/Linux distributions with a GUI.  
 * On GNU/Linux without a GUI, you will need to either modify the source or  
   install Qt to compile the program, then you will be able to use the  
-  Console-only mode by passing it -c or --console.  
+  Console-only mode by passing it `-c` or `--console`.  
 * Windows not supported.  
   
 #### How to compile and use:  
   
-* Clone this repository on your computer and cd into it.
+* Clone this repository on your computer and cd into it.  
 * First, run `python3 ./get_types.py`. This script will check  
   what conversions are already supported by packages you have installed  
   and will suggest optional packages to install to convert certain files.  
   If you download any of these packages, re-run the script after.  
-* Compile the program using ./compile.sh.  
-* Now move the files `./convert` and `./add_to_dolphin.sh` and the 
-  directory `./supported_types` to a folder where you can keep it,
+* Compile the program using `./compile.sh`.  
+* Now move the files `./convert` and `./add_to_dolphin.sh` and the  
+  directory `./supported_types` to a folder where you can keep it,  
   for example `/opt/converter/`.  
 * You should now add `/opt/converter/` to your $PATH. Do this by adding  
   `export PATH="/opt/converter:$PATH"` to your `~/.bashrc`.  
@@ -31,22 +31,22 @@ or you can add the program to the Dolphin file manager.
   
 #### Dependencies:  
   
-Listed in ./dependencies.md. Most are optional, but you will run into trouble  
-compiling without Qt.  
+Listed in ./dependencies.md. Most are optional,  
+but Qt and some coreutils are needed.  
   
 #### How to add own converter:
   
 Example for converting .pdf and .bat files into .AppImage and .h files:  
 Add a file to ./supported_types.  
   
-* Line 1 of this file must be ```!command```.  
+* Line 1 of this file must be `!command`.  
   Replace command with an actual command on your $PATH.  
   This can be any executable that takes argv[1] as a path to the input file  
   and argv[2] as a output path. It should exit with code 0 on successful  
   conversion and with something else otherwise.  
 * Line 2 must be a space-separated list of allowed input formats,  
-  in this example: ``` pdf bat```. Note: The line must start with a space.  
-* Line 3 is like line 2, just for output formats: ``` appimage h```  
+  in this example: ` pdf bat`. Note: The line must start with a space.  
+* Line 3 is like line 2, just for output formats: ` appimage h`  
   
 It must be possible to convert any input format into any output format.  
 If this is not possible, use multiple files.  
