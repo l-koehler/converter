@@ -57,12 +57,8 @@ int squashfs(const string& input_file, const string& output_file) {
 	string tmp_dir = "/tmp/convert_squash/";
 	vector<string> argument_list;
 	int exit_status;
-    // create temp dir if it doesnt exist
-    argument_list = {"mkdir", "-p", tmp_dir};
-    exit_status = execvpString(argument_list);
-    if (exit_status != 0) { // if tar failed
-        return exit_status;
-    }
+    // create temp dir (if it doesnt exist)
+	std::filesystem::create_directory(tmp_dir);
 	if (input_file_ext == "tar" || input_file_ext == "tgz") {
 		// unpack to tpm_dir
 		argument_list = {"tar", "-xvf", input_file, "-C", tmp_dir};

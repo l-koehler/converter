@@ -29,3 +29,5 @@ This one isn't optional.
     Is probably already preinstalled. If it is not, use your
     systems package manager to install it. Needed only for the GUI,
     but the program will not compile without it.
+
+Some more minor packages that are likely present and needed: tar, ar
