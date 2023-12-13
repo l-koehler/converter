@@ -45,8 +45,8 @@ Add a file to ./supported_types.
   and argv[2] as a output path. It should exit with code 0 on successful  
   conversion and with something else otherwise.  
 * Line 2 must be a space-separated list of allowed input formats,  
-  in this example: ` pdf bat`. Note: The line must start with a space.  
-* Line 3 is like line 2, just for output formats: ` appimage h`  
+  in this example: ` pdf bat `. Note: The line must start/end with a space.  
+* Line 3 is like line 2, just for output formats: ` appimage h `  
   
 It must be possible to convert any input format into any output format.  
 If this is not possible, use multiple files.  

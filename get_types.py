@@ -60,7 +60,7 @@ if is_ffmpeg_installed():
 				write_demux = write_demux + " " + format
 			for format in mux_formats:
 				write_mux = write_mux + " " + format
-			ffmpeg_types_content = "ffmpeg\n" + write_demux + "\n" + write_mux
+			ffmpeg_types_content = f"ffmpeg\n{write_demux} \n{write_mux} "
 			file1.write(ffmpeg_types_content)
 else:
 	print("FFmpeg is not installed/not on the $PATH. It is required for Audio and Video conversion.")
@@ -104,4 +104,4 @@ unpack_str += " deb ar a"
 #     print("ar is not installed/not on the $PATH. It is required for handling .deb/.ar/.a files.")
 
 with open("./supported_types/compression_types.txt", "w") as file:
-    file.write(f"compressed\n{unpack_str}\n{pack_str}")
+    file.write(f"compressed\n{unpack_str} \n{pack_str} ")

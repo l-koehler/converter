@@ -184,7 +184,7 @@ vector<string> getPossibleOutput(const string& input_file) {
             // currently iterating over typefiles, filename is the current file name.
             supported_in_types = readNthLine(file_path, 2);
             supported_out_types = readNthLine(file_path, 3);
-            if (supported_in_types.find(" "+input_file_ext) != string::npos || supported_in_types.find(input_file_ext+" ") != string::npos) {
+            if (supported_in_types.find(" "+input_file_ext) != string::npos || supported_in_types.find(" "+input_file_ext+" ") != string::npos) {
                 //cout << "Found available Converter: " << readNthLine(file_path, 1) << endl;
                 istringstream iss(supported_out_types);
                 string item;
@@ -230,8 +230,8 @@ string getConverter(const string& input_file, const string& output_file) {
             // currently iterating over typefiles, filename is the current file name.
             supported_in_types = readNthLine(file_path, 2);
             supported_out_types = readNthLine(file_path, 3);
-            if (     supported_in_types.find(" "+input_file_ext)  != string::npos ||  supported_in_types.find( input_file_ext+" ") != string::npos) {
-                if (supported_out_types.find(" "+output_file_ext) != string::npos || supported_out_types.find(output_file_ext+" ") != string::npos) {
+            if (supported_in_types.find(" "+input_file_ext+" ") != string::npos) {
+                if (supported_out_types.find(" "+output_file_ext+" ") != string::npos) {
                     converter = readNthLine(file_path, 1);
                 }
             }
