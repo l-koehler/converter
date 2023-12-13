@@ -22,12 +22,28 @@ the dependencies will not work.
     Needed for markdown support, for
     example .html and .md files.
 
+4: squashfs-tools
+    LICENSE: GPLv2
+    Available in most GNU/Linux package managers under the name
+    'squashfs-tools'. Can also be compiled from [source (github)](https://github.com/plougher/squashfs-tools).
+    Needed for squashfs and snap support.
+
+
 This one isn't optional.
-4: Qt
+5: Qt
     LICENSE: For this Software it is under the GPLv3.
     (https://www.qt.io/faq/tag/qt-open-source-licensing)
     Is probably already preinstalled. If it is not, use your
     systems package manager to install it. Needed only for the GUI,
     but the program will not compile without it.
 
-Some more minor packages that are likely present and needed: tar, ar
+Some more minor packages that are likely present
+and needed for some things: 
+tar
+    LICENSE: GPLv3+
+    Needed for everything involving .tar-files.
+    Didnt bother checking for it yet, program simply assumes tar exists.
+ar
+    LICENSE: GPLv3+
+    Needed for everything involving .ar files (including .deb).
+    Checking is done in ./get_types.py.

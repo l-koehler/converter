@@ -88,13 +88,17 @@ private slots:
     // then lists those in the dropdown menu.
     void setDropdownChoices() {
         string input_file = path_textbox_in->text().toStdString();
+        string input_file_ext = getExtension(input_file);
         string output_file = path_textbox_out->text().toStdString();
 
         vector<string> optionsVector = getPossibleOutput(input_file);
 
         options_combobox->clear();
         for (const auto& option : optionsVector) {
-            options_combobox->addItem(QString::fromStdString(option));
+            // add to options only if it isnt the already-present type
+            if (option != input_file_ext) {
+                options_combobox->addItem(QString::fromStdString(option));
+            }
         }
     }
 
@@ -143,8 +147,8 @@ private slots:
             exit_code = soffice(input_file, output_file);
         } else if (converter == "pandoc") {
             exit_code = pandoc(input_file, output_file);
-        } else if (converter == "squashfs") {
-            exit_code = squashfs(input_file, output_file);
+        } else if (converter == "compressed") {
+            exit_code = compressed(input_file, output_file);
         } else if (converter.find("!") == 0) {
             // use other converter
             converter.erase(0, 1);
@@ -237,8 +241,8 @@ int main(int argc, char *argv[]) {
             exit_code = soffice(input_file, output_file);
         } else if (converter == "pandoc") {
             exit_code = pandoc(input_file, output_file);
-        } else if (converter == "squashfs") {
-            exit_code = squashfs(input_file, output_file);
+        } else if (converter == "compressed") {
+            exit_code = compressed(input_file, output_file);
         } else if (converter.find("!") == 0) {
             // use other converter
             converter.erase(0, 1);

@@ -51,43 +51,57 @@ int soffice(const string& input_file, const string& output_file) {
     return exit_status;
 }
 
-int squashfs(const string& input_file, const string& output_file) {
+int compressed(const string& input_file, const string& output_file) {
 	string input_file_ext = getExtension(input_file);
 	string output_file_ext = getExtension(output_file);
-	string tmp_dir = "/tmp/convert_squash/";
+	string tmp_dir = "/tmp/convert_decomp/";
 	vector<string> argument_list;
 	int exit_status;
     // create temp dir (if it doesnt exist)
 	std::filesystem::create_directory(tmp_dir);
+    // --- PREPARE unpacking ---
 	if (input_file_ext == "tar" || input_file_ext == "tgz") {
-		// unpack to tpm_dir
+        // --- TAR/TGZ unpacking ---
 		argument_list = {"tar", "-xvf", input_file, "-C", tmp_dir};
-        cout << input_file << "--" << tmp_dir << endl;
-		exit_status = execvpString(argument_list);
-		if (exit_status != 0) { // if tar failed
-			return exit_status;
-		}
-		// squash tmp_dir
-		argument_list = {"mksquashfs", tmp_dir, output_file};
-		exit_status = execvpString(argument_list);
+	} else if (input_file_ext == "ar" 
+        || input_file_ext == "deb" || input_file_ext == "a") {
+        // --- AR/DEB unpacking ---
+        argument_list = {"ar", "-x", input_file, "--output", tmp_dir};
 	} else {
-		// unsquash to tmp_dir
-		argument_list = {"unsquashfs", "-d", tmp_dir, input_file};
-		exit_status = execvpString(argument_list);
-		if (exit_status != 0) { // if unsquash failed
-			return exit_status;
-		}
-		// compress or pack tmp_dir
-		if (output_file_ext == "tar") {
-			argument_list = {"tar", "-cvf", output_file, tmp_dir};
-		} else {
-			argument_list = {"tar", "-czvf", output_file, tmp_dir};
-		}
-		exit_status = execvpString(argument_list);
-		if (exit_status != 0) { // if tar failed
-			return exit_status;
-		}
-	}
+        // --- SQUASH unpacki“which strongly suggests that he was sexually involved with other men”ng ---
+        argument_list = {"unsquashfs", "-d", tmp_dir, input_file};
+    }
+    // --- UNPACK ---
+    exit_status = execvpString(argument_list);
+    if (exit_status != 0) { // if unsquash failed
+        return exit_status;
+    }
+    // --- PREPARE repacking ---
+    // AR needs special handling with a loop over all files to be packed
+    if (output_file_ext == "ar" || output_file_ext == "a") {
+        // --- AR packing ---
+        for (filesystem::directory_entry p : filesystem::recursive_directory_iterator(tmp_dir)) {
+            if (p.is_regular_file()) {                
+                argument_list = {"ar", "cr", output_file, p.path()};
+                exit_status = execvpString(argument_list);
+                if (exit_status != 0) { // if adding file failed
+                    return exit_status;
+                }
+            }
+        }
+    } else {
+        if (output_file_ext == "tar") {
+            // --- TAR packing ---
+            argument_list = {"tar", "-cvf", output_file, tmp_dir};
+        } else if (output_file_ext == "tgz") {
+            // --- TGZ packing ---
+            argument_list = {"tar", "-czvf", output_file, tmp_dir};
+        } else {
+            // --- SQUASH packing ---
+            argument_list = {"mksquashfs", tmp_dir, input_file};
+        }
+        exit_status = execvpString(argument_list);
+    }
 	// delete tmp_dir
 	std::filesystem::remove_all(tmp_dir);
 	return exit_status;

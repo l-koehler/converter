@@ -1,0 +1,3 @@
+compressed
+ tar tgz snap sqfs squashfs deb ar a
+ tar tgz squashfs ar

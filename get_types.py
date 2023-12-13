@@ -9,7 +9,7 @@ def is_ffmpeg_installed():
 		# This will output the version information if FFmpeg is installed
 		subprocess.check_output(['ffmpeg', '-version'])
 		return True
-	except subprocess.CalledProcessError:
+	except FileNotFoundError:
 		return False
 if is_ffmpeg_installed():
 	print("FFmpeg is installed. Generating list of supported types...")
@@ -66,9 +66,12 @@ else:
 	print("FFmpeg is not installed/not on the $PATH. It is required for Audio and Video conversion.")
 	with open("./supported_types/ffmpeg_types.txt", "w") as file:
 		file.write("ffmpeg\n \n ")
-	print("Setting FFmpegs supported in/output types to none. FFmpeg will not be used.")
 
-# SquashFS stuff (for .snap/.squashfs -> .tar/.zip/.tgz)
+"""        (always )(with ar)(with squashfs-tools)
+file from: (tar/tgz)(ar/deb )(snap/squashfs      )
+       to: (tar/tgz)(ar     )(squashfs           )
+packaging software is far out-of-scope for now
+"""
 def is_squashfs_installed():
 	try:
 		# Run mk- and unsquashfs commands with the '-v' flag
@@ -80,16 +83,25 @@ def is_squashfs_installed():
 		return False
 	except: # all other errors can be anything else.
 		return True
+def is_ar_installed():
+    try:
+        subprocess.check_output(['ar', '-V'])
+        ar_present = True
+    except FileNotFoundError:
+        ar_present = False
+
+pack_str = " tar tgz"
+unpack_str = " tar tgz"
 if is_squashfs_installed():
-	print("squashfs-tools is installed. Generating list of supported types...")
-	with open("./supported_types/squashfs_decompress.txt", "w") as file:
-		file.write("squashfs\n snap squashfs squ sqfs\n tar tgz") # snap/squashfs/squ/sqfs -> tar/tgz
-	with open("./supported_types/squashfs_compress.txt", "w") as file:
-		file.write("squashfs\n tar tgz \n squashfs") # tar/tgz -> squashfs
+    pack_str += " squashfs"
+    unpack_str += " snap sqfs squashfs"
 else:
-	print("squashfs-tools is not installed/not on the $PATH. It is required for extracting .snap files.")
-	with open("./supported_types/squashfs_decompress.txt", "w") as file:
-		file.write("squashfs\n \n ")
-	with open("./supported_types/squashfs_compress.txt", "w") as file:
-		file.write("squashfs\n \n ")
-	print("Setting squashfs-tools supported in/output types to none. Squashfs will not be used.")
+    print("squashfs-tools is not installed/not on the $PATH. It is required for handling .snap/.squashfs files.")
+# if is_ar_installed():
+pack_str += " ar"
+unpack_str += " deb ar a"
+# else:
+#     print("ar is not installed/not on the $PATH. It is required for handling .deb/.ar/.a files.")
+
+with open("./supported_types/compression_types.txt", "w") as file:
+    file.write(f"compressed\n{unpack_str}\n{pack_str}")
