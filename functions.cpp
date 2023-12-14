@@ -1,7 +1,7 @@
-// Needed for basic logic and interaction with files
+// Basic functions (described in header file)
 #include <iostream>
 #include <string>
-#include <filesystem> // only works in C++17 and later, older versions are not supported!
+#include <filesystem>
 #include <fstream>
 #include <sstream>
 #include <vector>
@@ -41,7 +41,8 @@ string getCurrentFilePath() {
         }
     }
 
-void show_error(const string& title , const string& text , const string& info , const bool is_error, const bool use_gui) {
+void show_error(const string& title, const string& text, const string& info,
+                const bool is_error, const bool use_gui) {
         if (use_gui) {
             QMessageBox error_box;
             if (is_error) {
@@ -96,7 +97,8 @@ string getExtension(const string& fullPath) {
         // Extract the substring after the dot, e.g. "txt"
         return fullPath.substr(dotPosition + 1);
     }
-    // If there is no dot or the dot is at the end of the string (e.g., "file."), return an empty string
+    // If there is no dot or the dot is at the end of the string
+    // (e.g., "file."), return an empty string
     return "";
 }
 
@@ -174,23 +176,22 @@ vector<string> getPossibleOutput(const string& input_file) {
     string typefilepath = directorypath + "/supported_types";
     string supported_in_types;
     string supported_out_types;
-    string input_file_ext = getExtension(input_file);
+    string input_file_ext = " "+getExtension(input_file)+" ";
     vector<string> optionsVector;
     for (const auto& entry : filesystem::directory_iterator(typefilepath)) {
         // Check if the current entry is a regular file
         if (entry.is_regular_file()) {
             // Get the file path
             string file_path = entry.path().string();
-            // currently iterating over typefiles, filename is the current file name.
             supported_in_types = readNthLine(file_path, 2);
             supported_out_types = readNthLine(file_path, 3);
-            if (supported_in_types.find(" "+input_file_ext) != string::npos || supported_in_types.find(" "+input_file_ext+" ") != string::npos) {
-                //cout << "Found available Converter: " << readNthLine(file_path, 1) << endl;
+            if (supported_in_types.find(input_file_ext) != string::npos) {
                 istringstream iss(supported_out_types);
                 string item;
                 // Split the string and store unique elements in optionsVector
                 while (iss >> item) {
-                    if (find(optionsVector.begin(), optionsVector.end(), item) == optionsVector.end()) {
+                    if (find(optionsVector.begin(), optionsVector.end(), item)
+                        == optionsVector.end()) {
                         optionsVector.push_back(item);
                     }
                 }
@@ -218,8 +219,8 @@ string getConverter(const string& input_file, const string& output_file) {
     string typefilepath = directorypath + "/supported_types";
     string supported_in_types;
     string supported_out_types;
-    string output_file_ext = getExtension(output_file);
-    string input_file_ext = getExtension(input_file);
+    string output_file_ext = " "+getExtension(output_file)+" ";
+    string input_file_ext  = " "+getExtension(input_file) +" ";
     string converter = "";
 
     for (const auto& entry : filesystem::directory_iterator(typefilepath)) {
@@ -227,11 +228,11 @@ string getConverter(const string& input_file, const string& output_file) {
         if (entry.is_regular_file()) {
             // Get the file path
             string file_path = entry.path().string();
-            // currently iterating over typefiles, filename is the current file name.
             supported_in_types = readNthLine(file_path, 2);
             supported_out_types = readNthLine(file_path, 3);
-            if (supported_in_types.find(" "+input_file_ext+" ") != string::npos) {
-                if (supported_out_types.find(" "+output_file_ext+" ") != string::npos) {
+            if (supported_in_types.find(input_file_ext) != string::npos) {
+                if (supported_out_types.find(output_file_ext)
+                    != string::npos) {
                     converter = readNthLine(file_path, 1);
                 }
             }

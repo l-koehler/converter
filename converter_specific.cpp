@@ -1,7 +1,7 @@
 // This file contains converter-specific code.
 #include <iostream>
 #include <string>
-#include <filesystem> // only works in C++17 and later, older versions are not supported!
+#include <filesystem>
 #include <fstream>
 #include <sstream>
 #include <vector>
@@ -35,8 +35,7 @@ int pandoc(const string& input_file, const string& output_file) {
 }
 
 int magick(const string& input_file, const string& output_file) {
-    vector<string> argument_list {"magick", "convert", input_file,
-        "-o", output_file};
+    vector<string> argument_list {"magick", "convert", input_file, output_file};
         return execvpString(argument_list);
 }
 
@@ -74,7 +73,7 @@ int compressed(const string& input_file, const string& output_file) {
         // --- AR/DEB unpacking ---
         argument_list = {"ar", "-x", input_file, "--output", tmp_dir};
     } else {
-        // --- SQUASH unpacki“which strongly suggests that he was sexually involved with other men”ng ---
+        // --- SQUASH unpack ---
         argument_list = {"unsquashfs", "-d", tmp_dir, input_file};
     }
     // --- UNPACK ---
@@ -86,7 +85,8 @@ int compressed(const string& input_file, const string& output_file) {
     // AR needs special handling with a loop over all files to be packed
     if (output_file_ext == "ar" || output_file_ext == "a") {
         // --- AR packing ---
-        for (filesystem::directory_entry p : filesystem::recursive_directory_iterator(tmp_dir)) {
+        for (filesystem::directory_entry p : 
+            filesystem::recursive_directory_iterator(tmp_dir)) {
             if (p.is_regular_file()) {                
                 argument_list = {"ar", "cr", output_file, p.path()};
                 exit_status = execvpString(argument_list);

@@ -1,8 +1,7 @@
 // Needed for basic logic and interaction with files
 #include <iostream>
 #include <string>
-#include <filesystem> // only works in C++17 and later, older versions are not 
-                      // supported!
+#include <filesystem>
 #include <fstream>
 #include <sstream>
 #include <vector>
