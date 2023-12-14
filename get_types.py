@@ -162,3 +162,45 @@ if command_available(['pandoc', '--version']):
         print(f"Error: pandoc command returned non-zero exit status {completed_process.returncode}")
 else:
     print("pandoc is not installed/not on the $PATH. It is required for most Markdown files.")
+
+"""
+Checking for magick
+Most Image formats
+"""
+if command_available(['magick', '-version']):
+    print("magick is available.")
+    completed_process = subprocess.run(['magick', 'identify', '-list', 'format'], capture_output=True, text=True)
+    if completed_process.returncode == 0:
+        magick_formats = completed_process.stdout
+        magick_format_list = magick_formats.split('\n')
+        in_formats = []
+        out_formats = []
+        # TODO: This is a absolute mess. It works, but still needs a cleanup.
+        for line in magick_format_list:
+            if '-'*len(line) == line:
+                continue
+            line_words = line.strip().split(' ')
+            line_words = list(filter(None, line_words))
+            if line_words == []:
+                continue
+            print(line_words)
+            if not set(line_words[0]) <= set('ABCDEFTGHIJKLMNOPQRSTUVWXYZ*-'):
+                continue
+            file_format = line_words[0].replace("*","").lower()
+            rw_status = line_words[2].replace("-","").replace("+","")
+            if rw_status == "rw":
+                in_formats.append(file_format)
+                out_formats.append(file_format)
+            elif rw_status == "r":
+                in_formats.append(file_format)
+            elif rw_status == "w":
+                out_formats.append(file_format)
+            format_list = [in_formats, out_formats]
+            write_formats_to_file('./supported_types/magick_types.txt', format_list, 'magick')
+    else:
+        print(f"Error: Magick command returned non-zero exit status {completed_process.returncode}")
+else:
+    print("magick is not installed/not on the $PATH. It is required for most Image files.")
+
+
+
