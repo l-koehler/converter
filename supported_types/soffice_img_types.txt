@@ -1,3 +1,0 @@
-soffice
- eps emf gif jpg odd png tiff bmp webp 
- eps emf gif html jpg odd pdf png svg tiff bmp xhtml webp 

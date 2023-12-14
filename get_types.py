@@ -24,8 +24,6 @@ if command_available(['ffmpeg', '-version']):
     # Check if the command was successful
     if completed_process.returncode == 0:
         ffmpeg_formats = completed_process.stdout
-    else:
-        print(f"Error: FFmpeg command returned non-zero exit status {completed_process.returncode}")
         def parse_formats(input_str):
             demux_formats = []
             mux_formats = []
@@ -67,6 +65,8 @@ if command_available(['ffmpeg', '-version']):
                 write_mux = write_mux + " " + format
             ffmpeg_types_content = f"ffmpeg\n{write_demux} \n{write_mux} "
             file1.write(ffmpeg_types_content)
+    else:
+        print(f"Error: FFmpeg command returned non-zero exit status {completed_process.returncode}")
 else:
     print("FFmpeg is not installed/not on the $PATH. It is required for most Audio and Video files.")
     with open("./supported_types/ffmpeg_types.txt", "w") as file:
@@ -104,3 +104,35 @@ else:
 
 with open("./supported_types/compression_types.txt", "w") as file:
     file.write(f"compressed\n{unpack_str} \n{pack_str} ")
+
+"""
+Checking for soffice (Libreoffice)
+Some images, most office formats
+"""
+if command_available(['soffice', '--version']):
+    print("LibreOffice is available.")
+    """
+    No clue how to get LibreOffice to display its supported
+    Conversions, so this will save some premade lists. TODO.
+    """
+    def write_formats_to_file(filename, formats, converter='soffice'):
+        in_formats  = ' '.join(formats[0])
+        out_formats = ' '.join(formats[1])
+        with open(filename, "w") as file:
+            file.write(f"{converter}\n {in_formats} \n {out_formats} ")
+
+    calc  = [['csv', 'xls', 'xml', 'xlsx', 'ods', 'sdc'],
+             ['csv', 'html', 'xls', 'xml', 'ods', 'sdc', 'xhtml']]
+    img   = [['eps', 'emf', 'gif', 'jpg', 'odd', 'png', 'tiff', 'bmp', 'webp'],
+             ['eps', 'emf', 'gif', 'html', 'jpg', 'odd', 'pdf', 'png', 'svg', 'tiff', 'bmp', 'xhtml', 'webp']]
+    slide = [['odp', 'ppt', 'pptx', 'sda'],
+             ['eps', 'gif', 'html', 'swf', 'odp', 'ppt', 'pdf', 'svg', 'sda', 'xml']]
+    text  = [['xml', 'html', 'doc', 'docx', 'odt', 'txt', 'rtf', 'sdw'],
+             ['bib', 'xml', 'html', 'ltx', 'doc', 'odt', 'txt', 'pdf', 'rtf', 'sdw']]
+    write_formats_to_file('./supported_types/soffice_calc.txt', calc)
+    write_formats_to_file('./supported_types/soffice_img.txt', img)
+    write_formats_to_file('./supported_types/soffice_slide.txt', slide)
+    write_formats_to_file('./supported_types/soffice_text.txt', text)
+else:
+    print("LibreOffice is not installed/not on the $PATH. It is required for most Office and some Image files.")
+
