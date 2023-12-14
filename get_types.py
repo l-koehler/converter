@@ -14,6 +14,11 @@ def command_available(argv):
         return True
     except FileNotFoundError:
         return False
+def write_formats_to_file(filename, formats, converter):
+    in_formats  = ' '.join(formats[0])
+    out_formats = ' '.join(formats[1])
+    with open(filename, "w") as file:
+        file.write(f"{converter}\n {in_formats} \n {out_formats} ")
 """
 Checking for FFmpeg
 Needed for most audio and video files.
@@ -116,12 +121,6 @@ if command_available(['soffice', '--version']):
     No clue how to get LibreOffice to display its supported
     Conversions, so this will save some premade lists. TODO.
     """
-    def write_formats_to_file(filename, formats, converter='soffice'):
-        in_formats  = ' '.join(formats[0])
-        out_formats = ' '.join(formats[1])
-        with open(filename, "w") as file:
-            file.write(f"{converter}\n {in_formats} \n {out_formats} ")
-
     calc  = [['csv', 'xls', 'xml', 'xlsx', 'ods', 'sdc'],
              ['csv', 'html', 'xls', 'xml', 'ods', 'sdc', 'xhtml']]
     img   = [['eps', 'emf', 'gif', 'jpg', 'odd', 'png', 'tiff', 'bmp', 'webp'],
@@ -130,10 +129,36 @@ if command_available(['soffice', '--version']):
              ['eps', 'gif', 'html', 'swf', 'odp', 'ppt', 'pdf', 'svg', 'sda', 'xml']]
     text  = [['xml', 'html', 'doc', 'docx', 'odt', 'txt', 'rtf', 'sdw'],
              ['bib', 'xml', 'html', 'ltx', 'doc', 'odt', 'txt', 'pdf', 'rtf', 'sdw']]
-    write_formats_to_file('./supported_types/soffice_calc.txt', calc)
-    write_formats_to_file('./supported_types/soffice_img.txt', img)
-    write_formats_to_file('./supported_types/soffice_slide.txt', slide)
-    write_formats_to_file('./supported_types/soffice_text.txt', text)
+    write_formats_to_file('./supported_types/soffice_calc.txt', calc, 'soffice')
+    write_formats_to_file('./supported_types/soffice_img.txt', img, 'soffice')
+    write_formats_to_file('./supported_types/soffice_slide.txt', slide, 'soffice')
+    write_formats_to_file('./supported_types/soffice_text.txt', text, 'soffice')
 else:
     print("LibreOffice is not installed/not on the $PATH. It is required for most Office and some Image files.")
 
+"""
+Checking for pandoc
+Most Markdown/plain text formats
+"""
+if command_available(['pandoc', '--version']):
+    print("pandoc is available.")
+    completed_process = subprocess.run(['pandoc', '--list-input-formats'], capture_output=True, text=True)
+    if completed_process.returncode == 0:
+        in_formats = completed_process.stdout
+        in_format_list = in_formats.split('\n')
+        if 'markdown' in in_format_list:
+            in_format_list.append('md')
+        completed_process = subprocess.run(['pandoc', '--list-output-formats'], capture_output=True, text=True)
+        if completed_process.returncode == 0:
+            out_formats = completed_process.stdout
+            out_format_list = out_formats.split('\n')
+            if 'markdown' in out_format_list:
+                out_format_list.append('md')
+            format_list = [in_format_list, out_format_list]
+            write_formats_to_file('./supported_types/pandoc_types.txt', format_list, 'pandoc')
+        else:
+            print(f"Error: pandoc command returned non-zero exit status {completed_process.returncode}")
+    else:
+        print(f"Error: pandoc command returned non-zero exit status {completed_process.returncode}")
+else:
+    print("pandoc is not installed/not on the $PATH. It is required for most Markdown files.")
