@@ -17,7 +17,7 @@
 using namespace std;
 
 int userdefined(const string& command, 
-				const string& input_file, const string& output_file) {
+                const string& input_file, const string& output_file) {
     // command is the command in the custom typefile
     vector<string> argument_list {command, input_file, output_file};
     return execvpString(argument_list);
@@ -39,10 +39,10 @@ int soffice(const string& input_file, const string& output_file) {
     string output_file_ext = getExtension(output_file);
     string output_file_name = filesystem::path(output_file).filename();
     string tmp_file = "/tmp/" + output_file_name;
-	vector<string> argument_list {"soffice", "--headless",
-		"--convert-to", output_file, input_file,
-		"--outdir", "/tmp/"};
-	int exit_status = execvpString(argument_list);
+    vector<string> argument_list {"soffice", "--headless",
+        "--convert-to", output_file, input_file,
+        "--outdir", "/tmp/"};
+    int exit_status = execvpString(argument_list);
     // Move /tmp/<output_file_name> to <output_file> (removing tmp)
     ifstream ifs(tmp_file, ios::in | ios::binary);
     ofstream ofs(output_file, ios::out | ios::binary);
@@ -52,22 +52,22 @@ int soffice(const string& input_file, const string& output_file) {
 }
 
 int compressed(const string& input_file, const string& output_file) {
-	string input_file_ext = getExtension(input_file);
-	string output_file_ext = getExtension(output_file);
-	string tmp_dir = "/tmp/convert_decomp/";
-	vector<string> argument_list;
-	int exit_status;
+    string input_file_ext = getExtension(input_file);
+    string output_file_ext = getExtension(output_file);
+    string tmp_dir = "/tmp/convert_decomp/";
+    vector<string> argument_list;
+    int exit_status;
     // create temp dir (if it doesnt exist)
-	std::filesystem::create_directory(tmp_dir);
+    std::filesystem::create_directory(tmp_dir);
     // --- PREPARE unpacking ---
-	if (input_file_ext == "tar" || input_file_ext == "tgz") {
+    if (input_file_ext == "tar" || input_file_ext == "tgz") {
         // --- TAR/TGZ unpacking ---
-		argument_list = {"tar", "-xvf", input_file, "-C", tmp_dir};
-	} else if (input_file_ext == "ar" 
+        argument_list = {"tar", "-xvf", input_file, "-C", tmp_dir};
+    } else if (input_file_ext == "ar" 
         || input_file_ext == "deb" || input_file_ext == "a") {
         // --- AR/DEB unpacking ---
         argument_list = {"ar", "-x", input_file, "--output", tmp_dir};
-	} else {
+    } else {
         // --- SQUASH unpacki“which strongly suggests that he was sexually involved with other men”ng ---
         argument_list = {"unsquashfs", "-d", tmp_dir, input_file};
     }
@@ -102,7 +102,7 @@ int compressed(const string& input_file, const string& output_file) {
         }
         exit_status = execvpString(argument_list);
     }
-	// delete tmp_dir
-	std::filesystem::remove_all(tmp_dir);
-	return exit_status;
+    // delete tmp_dir
+    std::filesystem::remove_all(tmp_dir);
+    return exit_status;
 }
