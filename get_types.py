@@ -14,8 +14,10 @@ def command_available(argv):
         return True
     except FileNotFoundError:
         return False
-
-# FFMPEG stuff
+"""
+Checking for FFmpeg
+Needed for most audio and video files.
+"""
 if command_available(['ffmpeg', '-version']):
     print("FFmpeg is available.")
     # FFmpeg is assumed to be functional now.
@@ -29,7 +31,6 @@ if command_available(['ffmpeg', '-version']):
             mux_formats = []
             # Define the regular expression pattern to match lines starting with 'D' or 'E' and capture the first "word"
             pattern = r'^\s*(DE|D|E)\s+(\S+)'
-            # Split the input string into lines
             lines = input_str.splitlines()
             # Iterate over each line and extract format information
             for line in lines:
@@ -41,8 +42,8 @@ if command_available(['ffmpeg', '-version']):
                     if action == 'E' or action == 'DE':
                         mux_formats.append(file_extension)
             return demux_formats, mux_formats
+        # sometimes, types are merged like "mp4, mp3" in the output of the above function. This would break the detection of supported types.
         def unmerge(input_list):
-            # sometimes, types are merged like "mp4, mp3" in the output of the above function. This would break the detection of supported types.
             unmerged = []
             for possible_format in input_list:
                 if ',' in possible_format:
