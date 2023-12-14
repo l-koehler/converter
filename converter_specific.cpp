@@ -34,6 +34,12 @@ int pandoc(const string& input_file, const string& output_file) {
     return execvpString(argument_list);
 }
 
+int magick(const string& input_file, const string& output_file) {
+    vector<string> argument_list {"magick", "convert", input_file,
+        "-o", output_file};
+        return execvpString(argument_list);
+}
+
 int soffice(const string& input_file, const string& output_file) {
     // Convert to /tmp/<filename>.<extension>, then move
     string output_file_ext = getExtension(output_file);

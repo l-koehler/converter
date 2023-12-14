@@ -147,6 +147,8 @@ private slots:
             exit_code = soffice(input_file, output_file);
         } else if (converter == "pandoc") {
             exit_code = pandoc(input_file, output_file);
+        } else if (converter == "magick") {
+            exit_code = magick(input_file, output_file);
         } else if (converter == "compressed") {
             exit_code = compressed(input_file, output_file);
         } else if (converter.find("!") == 0) {
@@ -243,6 +245,8 @@ int main(int argc, char *argv[]) {
             exit_code = pandoc(input_file, output_file);
         } else if (converter == "compressed") {
             exit_code = compressed(input_file, output_file);
+        } else if (converter == "magick") {
+            exit_code = magick(input_file, output_file);
         } else if (converter.find("!") == 0) {
             // use other converter
             converter.erase(0, 1);
