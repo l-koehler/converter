@@ -1,3 +1,5 @@
+### This is no longer developed. Instead, use [ff-converter](https://github.com/l-koehler/FF-converter).
+
 #### What is this:  
   
 This program wraps several converters (ffmpeg, pandoc, unoconv) to be able  
